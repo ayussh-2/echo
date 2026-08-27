@@ -1,4 +1,12 @@
 import { useState, useEffect, type ReactElement } from "react";
+import {
+  MessageSquare,
+  Mail,
+  QrCode,
+  Settings,
+  Inbox,
+  Send,
+} from "lucide-react";
 import type { NotificationItem } from "@echo/shared-types";
 import { WindowsTitleBar } from "../components/WindowsTitleBar";
 import type { UserSession } from "../types/electron";
@@ -72,7 +80,7 @@ export function InboxView(): ReactElement {
       setExpandedId(null);
       await window.echoApi?.markAsRead(notif.id);
       setNotifications((prev) =>
-        prev.map((n) => (n.id === notif.id ? { ...n, isRead: true } : n))
+        prev.map((n) => (n.id === notif.id ? { ...n, isRead: true } : n)),
       );
     } finally {
       setIsSending(false);
@@ -97,9 +105,7 @@ export function InboxView(): ReactElement {
   const hasSeenNotifications = notifications.some((n) => n.isRead);
 
   return (
-    <div className="w-full h-full flex flex-col glass-panel overflow-hidden shadow-2xl border border-white/60">
-      <div className="ambient-bg" />
-
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden shadow-2xl border border-black/[0.08]">
       {/* Windows Native Title Bar */}
       <WindowsTitleBar title="Echo Inbox" />
 
@@ -116,9 +122,9 @@ export function InboxView(): ReactElement {
           <button
             onClick={handleOpenPair}
             title="Pair Mobile Device"
-            className="px-2.5 py-1 text-xs font-semibold text-ink-soft bg-black/[0.04] hover:bg-black/[0.08] active:scale-95 rounded-lg transition-all flex items-center gap-1"
+            className="px-2.5 py-1 text-xs font-semibold text-ink-soft bg-black/[0.04] hover:bg-black/[0.08] active:scale-95 rounded-lg transition-all flex items-center gap-1.5"
           >
-            <span>📱</span>
+            <QrCode size={13} />
             <span>Pair</span>
           </button>
 
@@ -131,7 +137,7 @@ export function InboxView(): ReactElement {
                 : "text-ink-soft bg-black/[0.04] hover:bg-black/[0.08]"
             }`}
           >
-            ⚙️
+            <Settings size={13} />
           </button>
         </div>
       </div>
@@ -179,11 +185,11 @@ export function InboxView(): ReactElement {
           </div>
 
           {notifications.length > 0 && (
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllRead}
-                  className="text-xs font-semibold text-ink-faint hover:text-ink transition-colors"
+                  className="px-2.5 py-1 text-xs font-semibold bg-black/[0.05] hover:bg-black/[0.09] text-ink active:scale-95 rounded-lg transition-all"
                 >
                   Mark all read
                 </button>
@@ -191,7 +197,7 @@ export function InboxView(): ReactElement {
               {hasSeenNotifications && (
                 <button
                   onClick={handleClearRead}
-                  className="text-xs font-semibold text-red-500/80 hover:text-red-600 transition-colors"
+                  className="px-2.5 py-1 text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 rounded-lg transition-all"
                 >
                   Clear seen
                 </button>
@@ -202,8 +208,8 @@ export function InboxView(): ReactElement {
 
         {notifications.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-16">
-            <div className="w-14 h-14 rounded-2xl bg-black/[0.03] border border-black/[0.05] flex items-center justify-center text-2xl">
-              ✨
+            <div className="w-12 h-12 rounded-2xl bg-black/[0.03] border border-black/[0.05] flex items-center justify-center text-ink-faint">
+              <Inbox size={22} strokeWidth={1.75} />
             </div>
             <div className="flex flex-col gap-1">
               <h3 className="text-sm font-bold text-ink">All caught up</h3>
@@ -228,15 +234,15 @@ export function InboxView(): ReactElement {
                       window.echoApi?.markAsRead(item.id);
                       setNotifications((prev) =>
                         prev.map((n) =>
-                          n.id === item.id ? { ...n, isRead: true } : n
-                        )
+                          n.id === item.id ? { ...n, isRead: true } : n,
+                        ),
                       );
                     }
                   }}
-                  className={`glass-card rounded-2xl p-3.5 flex flex-col gap-2.5 transition-all cursor-pointer border ${
+                  className={`rounded-2xl p-3.5 flex flex-col gap-2.5 transition-all cursor-pointer ${
                     !item.isRead
-                      ? "border-primary/30 bg-white/90 shadow-sm"
-                      : "border-black/[0.04] opacity-80 hover:opacity-100 hover:bg-white/80"
+                      ? " border-black/[0.08] bg-white shadow-md"
+                      : "border border-black/[0.05] bg-white/70 opacity-75 hover:opacity-100 hover:bg-white"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -248,17 +254,21 @@ export function InboxView(): ReactElement {
                           : "bg-gradient-to-br from-sky to-[#0ea5e9]"
                       }`}
                     >
-                      <span className="text-sm font-bold">
-                        {isWhatsApp ? "💬" : "✉️"}
-                      </span>
+                      {isWhatsApp ? (
+                        <MessageSquare size={16} strokeWidth={2.2} />
+                      ) : (
+                        <Mail size={16} strokeWidth={2.2} />
+                      )}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="text-sm font-bold text-ink truncate leading-tight flex items-center gap-1.5">
+                        <div className="text-sm font-bold text-ink truncate leading-tight flex items-center gap-2">
                           <span>{item.title}</span>
                           {!item.isRead && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                            <span className="px-1.5 py-0.5 bg-primary text-white text-[9px] font-extrabold rounded-full uppercase tracking-wider leading-none shadow-xs">
+                              NEW
+                            </span>
                           )}
                         </div>
                         <span className="text-[11px] font-medium text-ink-faint shrink-0">
@@ -292,9 +302,14 @@ export function InboxView(): ReactElement {
                       <button
                         onClick={() => handleSendReply(item)}
                         disabled={!replyText.trim() || isSending}
-                        className="px-3 h-8 rounded-xl bg-ink text-white text-xs font-semibold hover:bg-black/90 active:scale-95 disabled:opacity-40 transition-all flex items-center gap-1"
+                        className="px-3 h-8 rounded-xl bg-ink text-white text-xs font-semibold hover:bg-black/90 active:scale-95 disabled:opacity-40 transition-all flex items-center gap-1.5"
                       >
-                        {isSending ? "..." : "Send"}
+                        {isSending ? (
+                          <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <Send size={12} />
+                        )}
+                        <span>Send</span>
                       </button>
                     </div>
                   )}

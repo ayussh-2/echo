@@ -1,41 +1,61 @@
 import { useState, useEffect, useRef, type ReactElement } from "react";
+import { MessageSquare, Mail, X, ArrowUp } from "lucide-react";
 import type { NotificationItem } from "@echo/shared-types";
 
 export function ToastView(): ReactElement {
-  const [notification, setNotification] = useState<NotificationItem | null>(null);
-  const [replyText, setReplyText] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [isPausedTimer, setIsPausedTimer] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
+  const [isSendingId, setIsSendingId] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
   const [progress, setProgress] = useState(100);
 
-  const durationMs = 8000;
+  const durationMs = 9000;
   const startTimeRef = useRef<number>(Date.now());
 
+  // Listen for initial view and real-time toast stack updates
   useEffect(() => {
-    window.echoApi
-      ?.getInitialView()
-      .then((res: { activeToast?: NotificationItem | null }) => {
-        if (res?.activeToast) {
-          setNotification(res.activeToast);
-          setProgress(100);
-          startTimeRef.current = Date.now();
-        }
-      });
+    window.echoApi?.getInitialView().then((res) => {
+      if (res?.activeToasts && res.activeToasts.length > 0) {
+        setNotifications(res.activeToasts);
+        setProgress(100);
+        startTimeRef.current = Date.now();
+      } else if (res?.activeToast) {
+        setNotifications([res.activeToast]);
+        setProgress(100);
+        startTimeRef.current = Date.now();
+      }
+    });
 
-    const unsubscribe = window.echoApi?.onNotificationReceived((notif) => {
-      setNotification(notif);
+    const unsubStack = window.echoApi?.onToastStackUpdated?.((stack) => {
+      if (stack && stack.length > 0) {
+        setNotifications(stack);
+        setProgress(100);
+        startTimeRef.current = Date.now();
+      } else {
+        setNotifications([]);
+      }
+    });
+
+    const unsubSingle = window.echoApi?.onNotificationReceived?.((notif) => {
+      setNotifications((prev) => {
+        const filtered = prev.filter((n) => n.id !== notif.id);
+        return [notif, ...filtered].slice(0, 4);
+      });
       setProgress(100);
       startTimeRef.current = Date.now();
     });
 
     return () => {
-      unsubscribe?.();
+      unsubStack?.();
+      unsubSingle?.();
     };
   }, []);
 
-  // Auto-dismiss countdown timer
+  const hasAnyActiveTyping = Object.values(replyTexts).some((txt) => txt.length > 0);
+
+  // Auto-dismiss countdown timer (pauses on hover or active typing)
   useEffect(() => {
-    if (!notification || isSending || isPausedTimer || replyText.length > 0) {
+    if (notifications.length === 0 || isSendingId !== null || isHovered || hasAnyActiveTyping) {
       return;
     }
 
@@ -46,127 +66,179 @@ export function ToastView(): ReactElement {
 
       if (remaining <= 0) {
         clearInterval(interval);
-        window.echoApi?.dismissToast(notification.id);
+        window.echoApi?.dismissToast();
       }
     }, 50);
 
     return () => clearInterval(interval);
-  }, [notification, isSending, isPausedTimer, replyText, durationMs]);
+  }, [notifications.length, isSendingId, isHovered, hasAnyActiveTyping, durationMs]);
 
-  const handleSend = async () => {
-    if (!replyText.trim() || !notification || isSending) return;
+  const handleSendReply = async (notif: NotificationItem) => {
+    const text = replyTexts[notif.id]?.trim();
+    if (!text || isSendingId) return;
 
-    setIsSending(true);
+    setIsSendingId(notif.id);
     try {
       await window.echoApi?.sendReply({
-        notificationId: notification.id,
-        packageName: notification.packageName,
-        conversationId: notification.conversationId,
-        text: replyText.trim(),
+        notificationId: notif.id,
+        packageName: notif.packageName,
+        conversationId: notif.conversationId,
+        text,
       });
-      await window.echoApi?.dismissToast(notification.id);
-    } catch {
-      setIsSending(false);
+      setReplyTexts((prev) => {
+        const next = { ...prev };
+        delete next[notif.id];
+        return next;
+      });
+      setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+    } finally {
+      setIsSendingId(null);
     }
   };
 
-  const handleDismiss = () => {
-    if (notification) {
-      window.echoApi?.dismissToast(notification.id);
-    }
+  const handleDismissSingle = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    window.echoApi?.dismissToast(id);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSend();
-    } else if (e.key === "Escape") {
-      handleDismiss();
-    }
+  const handleDismissAll = () => {
+    setNotifications([]);
+    window.echoApi?.dismissToast();
   };
 
-  if (!notification) {
-    return (
-      <div className="p-4 text-xs text-ink-faint">No active notification</div>
-    );
+  if (notifications.length === 0) {
+    return <div className="w-full h-full bg-transparent" />;
   }
-
-  const isWhatsApp = notification.packageName.includes("whatsapp");
 
   return (
     <div
-      className="w-full h-full p-2 flex items-end justify-end select-none bg-transparent"
-      onMouseEnter={() => setIsPausedTimer(true)}
+      className="w-full h-full p-2 flex flex-col justify-end gap-2 select-none bg-transparent"
+      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
-        setIsPausedTimer(false);
-        startTimeRef.current =
-          Date.now() - ((100 - progress) / 100) * durationMs;
+        setIsHovered(false);
+        startTimeRef.current = Date.now() - ((100 - progress) / 100) * durationMs;
       }}
     >
-      <div className="w-full glass-card p-4 shadow-toast flex flex-col gap-2.5 rounded-2xl border border-white/95 animate-in fade-in slide-in-from-bottom-3 duration-200 relative overflow-hidden">
-        {/* Auto-dismiss subtle progress line */}
-        <div
-          className="absolute top-0 left-0 h-[2.5px] bg-primary/40 transition-all duration-75 ease-linear"
-          style={{ width: `${progress}%` }}
-        />
-
-        {/* Header */}
-        <div className="flex items-center gap-2.5">
-          <div
-            className={`w-7 h-7 rounded-xl flex items-center justify-center text-white text-xs shadow-sm ${
-              isWhatsApp
-                ? "bg-gradient-to-br from-[#4ade80] to-[#22c55e]"
-                : "bg-gradient-to-br from-sky to-[#0ea5e9]"
-            }`}
-          >
-            <span className="text-xs">{isWhatsApp ? "💬" : "✉️"}</span>
+      {/* Header dismiss all if multiple notifications exist in stack */}
+      {notifications.length > 1 && (
+        <div className="flex items-center justify-between px-3.5 py-1.5 bg-ink text-white rounded-xl shadow-lg border border-black/10 animate-in fade-in duration-150">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-xs font-bold tracking-wide">
+              {notifications.length} Unread Notifications
+            </span>
           </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold text-ink truncate leading-tight">
-              {notification.title}
-            </div>
-            <div className="text-[11px] font-medium text-ink-faint leading-none mt-0.5">
-              {notification.appName}
-            </div>
-          </div>
-
           <button
-            onClick={handleDismiss}
-            title="Dismiss (Esc)"
-            className="w-5 h-5 rounded-full hover:bg-black/5 flex items-center justify-center text-ink-faint hover:text-ink text-xs transition-colors"
+            onClick={handleDismissAll}
+            className="px-2 py-0.5 text-xs font-bold text-white/90 hover:text-white bg-white/10 hover:bg-white/20 active:scale-95 rounded-md transition-all"
           >
-            ✕
+            Clear all
           </button>
         </div>
+      )}
 
-        {/* Message preview */}
-        <div className="text-[13px] text-ink-soft leading-relaxed px-0.5 line-clamp-2">
-          &ldquo;{notification.text}&rdquo;
-        </div>
+      {/* Stacked Cards */}
+      <div className="flex flex-col gap-2">
+        {notifications.map((notification, index) => {
+          const isWhatsApp = notification.packageName.includes("whatsapp");
+          const isLatest = index === 0;
+          const currentText = replyTexts[notification.id] || "";
 
-        {/* Reply Bar */}
-        {notification.hasReplyAction && (
-          <div className="flex items-center gap-2 mt-0.5">
-            <input
-              type="text"
-              autoFocus
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type reply and press Enter…"
-              disabled={isSending}
-              className="flex-1 h-8 px-3.5 bg-white/80 backdrop-blur-md rounded-full text-xs text-ink placeholder:text-ink-faint border border-black/[0.08] outline-none focus:border-primary transition-all"
-            />
-            <button
-              onClick={handleSend}
-              disabled={!replyText.trim() || isSending}
-              className="w-8 h-8 rounded-full bg-ink text-white flex items-center justify-center text-xs font-bold hover:bg-black/90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+          return (
+            <div
+              key={notification.id}
+              className={`w-full glass-card p-3.5 shadow-toast flex flex-col gap-2.5 rounded-2xl border transition-all animate-in fade-in slide-in-from-bottom-2 duration-200 relative overflow-hidden ${
+                isLatest ? "border-primary/40 shadow-md" : "border-black/[0.08]"
+              }`}
             >
-              {isSending ? "..." : "↑"}
-            </button>
-          </div>
-        )}
+              {/* Auto-dismiss subtle progress line on the latest toast */}
+              {isLatest && (
+                <div
+                  className="absolute top-0 left-0 h-[2.5px] bg-primary/40 transition-all duration-75 ease-linear"
+                  style={{ width: `${progress}%` }}
+                />
+              )}
+
+              {/* Header */}
+              <div className="flex items-center gap-2.5">
+                <div
+                  className={`w-7 h-7 rounded-xl flex items-center justify-center text-white text-xs shadow-sm shrink-0 ${
+                    isWhatsApp
+                      ? "bg-gradient-to-br from-[#4ade80] to-[#22c55e]"
+                      : "bg-gradient-to-br from-sky to-[#0ea5e9]"
+                  }`}
+                >
+                  {isWhatsApp ? (
+                    <MessageSquare size={13} strokeWidth={2.5} />
+                  ) : (
+                    <Mail size={13} strokeWidth={2.5} />
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-ink truncate leading-tight">
+                    {notification.title}
+                  </div>
+                  <div className="text-[11px] font-medium text-ink-faint leading-none mt-0.5">
+                    {notification.appName}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handleDismissSingle(notification.id)}
+                  title="Dismiss"
+                  className="w-5 h-5 rounded-full hover:bg-black/5 flex items-center justify-center text-ink-faint hover:text-ink text-xs transition-colors shrink-0"
+                >
+                  <X size={13} />
+                </button>
+              </div>
+
+              {/* Message preview */}
+              <div className="text-[13px] text-ink-soft leading-relaxed px-0.5 line-clamp-2">
+                &ldquo;{notification.text}&rdquo;
+              </div>
+
+              {/* Quick Reply Bar */}
+              {notification.hasReplyAction && (
+                <div className="flex items-center gap-2 mt-0.5">
+                  <input
+                    type="text"
+                    autoFocus={isLatest}
+                    value={currentText}
+                    onChange={(e) =>
+                      setReplyTexts((prev) => ({
+                        ...prev,
+                        [notification.id]: e.target.value,
+                      }))
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSendReply(notification);
+                      } else if (e.key === "Escape") {
+                        handleDismissSingle(notification.id);
+                      }
+                    }}
+                    placeholder={`Reply to ${notification.title}...`}
+                    disabled={isSendingId === notification.id}
+                    className="flex-1 h-8 px-3.5 bg-white/80 backdrop-blur-md rounded-full text-xs text-ink placeholder:text-ink-faint border border-black/[0.08] outline-none focus:border-primary transition-all"
+                  />
+                  <button
+                    onClick={() => handleSendReply(notification)}
+                    disabled={!currentText.trim() || isSendingId === notification.id}
+                    className="w-8 h-8 rounded-full bg-ink text-white flex items-center justify-center text-xs font-bold hover:bg-black/90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm shrink-0"
+                  >
+                    {isSendingId === notification.id ? (
+                      <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <ArrowUp size={13} strokeWidth={2.5} />
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

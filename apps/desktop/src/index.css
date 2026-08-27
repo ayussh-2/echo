@@ -21,8 +21,6 @@ html, body, #root {
   --ink-soft: #55555a;
   --ink-faint: #8b8b90;
   --line: rgba(0, 0, 0, 0.08);
-  --glass: rgba(255, 255, 255, 0.88);
-  --glass-strong: rgba(255, 255, 255, 0.92);
 }
 
 .msi {
@@ -42,28 +40,14 @@ html, body, #root {
 }
 
 .glass-panel {
-  background: var(--glass);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.95);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .glass-card {
-  background: var(--glass-strong);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-.ambient-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(700px 500px at 8% 0%, rgba(56, 189, 248, 0.16), transparent 60%),
-    radial-gradient(600px 500px at 95% 15%, rgba(192, 132, 252, 0.16), transparent 60%),
-    radial-gradient(700px 600px at 40% 90%, rgba(255, 94, 58, 0.1), transparent 60%);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .btn-coral {

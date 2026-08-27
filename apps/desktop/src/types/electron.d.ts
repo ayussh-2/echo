@@ -8,7 +8,7 @@ export interface UserSession {
 }
 
 export interface EchoApi {
-  getInitialView: () => Promise<{ activeToast?: NotificationItem | null }>;
+  getInitialView: () => Promise<{ activeToast?: NotificationItem | null; activeToasts?: NotificationItem[] }>;
   closeWindow: () => Promise<void>;
   minimizeWindow: () => Promise<void>;
   maximizeWindow: () => Promise<void>;
@@ -20,8 +20,9 @@ export interface EchoApi {
   clearStoredSession: () => Promise<void>;
   signOut: () => Promise<void>;
   sendReply: (payload: CreateReplyPayload) => Promise<{ success: boolean; error?: string }>;
-  dismissToast: (notificationId: string) => Promise<void>;
+  dismissToast: (notificationId?: string) => Promise<void>;
   sendTestNotification: () => Promise<{ success: boolean }>;
+  sendConsecutiveTestNotifications: () => Promise<{ success: boolean }>;
   getNotifications: () => Promise<NotificationItem[]>;
   markAsRead: (notificationId: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
@@ -30,6 +31,7 @@ export interface EchoApi {
   getAutoStart: () => Promise<boolean>;
   setAutoStart: (enabled: boolean) => Promise<void>;
   onNotificationReceived: (callback: (notification: NotificationItem) => void) => () => void;
+  onToastStackUpdated: (callback: (notifications: NotificationItem[]) => void) => () => void;
   onNotificationsUpdated: (callback: (notifications: NotificationItem[]) => void) => () => void;
   onSessionChanged: (callback: (session: UserSession | null) => void) => () => void;
 }

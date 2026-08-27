@@ -1,5 +1,6 @@
 import { useState, useEffect, type ReactElement } from "react";
 import QRCode from "qrcode";
+import { Bell, ArrowRight } from "lucide-react";
 import { encodePairingPayload } from "@echo/crypto";
 import type { PairingPayload } from "@echo/shared-types";
 import { WindowsTitleBar } from "../components/WindowsTitleBar";
@@ -109,6 +110,15 @@ export function PairView(): ReactElement {
     }
   };
 
+  const handleTriggerConsecutiveTest = async () => {
+    setIsTriggeringTest(true);
+    try {
+      await window.echoApi?.sendConsecutiveTestNotifications();
+    } finally {
+      setTimeout(() => setIsTriggeringTest(false), 2000);
+    }
+  };
+
   const formatCountdown = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
@@ -116,8 +126,7 @@ export function PairView(): ReactElement {
   };
 
   return (
-    <div className="w-full h-full flex flex-col glass-panel overflow-hidden shadow-2xl border border-white/60">
-      <div className="ambient-bg" />
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden shadow-2xl border border-black/[0.08]">
 
       {/* Windows Native Title Bar */}
       <WindowsTitleBar title="Echo Setup & Pairing" />
@@ -207,16 +216,24 @@ export function PairView(): ReactElement {
                 className="w-full py-2.5 px-4 rounded-xl bg-ink text-white font-bold text-xs hover:bg-black/90 active:scale-[0.98] transition-all shadow-md flex items-center justify-center gap-1.5"
               >
                 <span>Proceed to Notifications Inbox</span>
-                <span>→</span>
+                <ArrowRight size={13} strokeWidth={2.5} />
+              </button>
+
+              <button
+                onClick={handleTriggerConsecutiveTest}
+                disabled={isTriggeringTest}
+                className="w-full py-2 px-3 rounded-xl bg-ink text-white hover:bg-black/90 font-semibold text-xs border border-black/[0.06] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <Bell size={13} />
+                <span>{isTriggeringTest ? "Simulating Stack..." : "Test Stacked WhatsApp Messages"}</span>
               </button>
 
               <button
                 onClick={handleTriggerTestNotification}
                 disabled={isTriggeringTest}
-                className="w-full py-2 px-3 rounded-xl bg-white/70 hover:bg-white text-ink font-semibold text-xs border border-black/[0.06] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                className="w-full py-1.5 px-3 rounded-xl bg-white/70 hover:bg-white text-ink-soft font-semibold text-xs border border-black/[0.06] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-sm"
               >
-                <span>🔔</span>
-                <span>{isTriggeringTest ? "Sending Toast..." : "Test Toast Popup"}</span>
+                <span>Test Single Notification</span>
               </button>
             </div>
           </>

@@ -20,8 +20,9 @@ const echoApi = {
 
   // Toast / Reply
   sendReply: (payload: unknown) => ipcRenderer.invoke("send-reply", payload),
-  dismissToast: (notificationId: string) => ipcRenderer.invoke("dismiss-toast", notificationId),
+  dismissToast: (notificationId?: string) => ipcRenderer.invoke("dismiss-toast", notificationId),
   sendTestNotification: () => ipcRenderer.invoke("send-test-notification"),
+  sendConsecutiveTestNotifications: () => ipcRenderer.invoke("send-consecutive-test-notifications"),
 
   // Notifications
   getNotifications: () => ipcRenderer.invoke("get-notifications"),
@@ -41,6 +42,12 @@ const echoApi = {
     const handler = (_: unknown, notif: unknown) => callback(notif);
     ipcRenderer.on("notification-received", handler);
     return () => ipcRenderer.removeListener("notification-received", handler);
+  },
+
+  onToastStackUpdated: (callback: (notifications: unknown) => void) => {
+    const handler = (_: unknown, notifs: unknown) => callback(notifs);
+    ipcRenderer.on("toast-stack-updated", handler);
+    return () => ipcRenderer.removeListener("toast-stack-updated", handler);
   },
 
   onNotificationsUpdated: (callback: (notifications: unknown) => void) => {

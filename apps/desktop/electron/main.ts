@@ -76,14 +76,30 @@ if (!gotTheLock) {
   app.quit();
 }
 
+import { exec } from "node:child_process";
+
 let tray: Tray | null = null;
 let mainWindow: BrowserWindow | null = null;
 let toastWindow: BrowserWindow | null = null;
-let activeToastNotification: NotificationItem | null = null;
+let activeToastNotifications: NotificationItem[] = [];
 let currentNotifications: NotificationItem[] = [];
 let isPaused = false;
+let isFocusAssistActive = false;
 let notificationUnsubscribe: (() => void) | null = null;
 let pairingUnsubscribe: (() => void) | null = null;
+
+function checkFocusAssistState(): void {
+  if (process.platform !== "win32") return;
+  const psCommand = `powershell -NoProfile -NonInteractive -Command "try { $reg = Get-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Notifications\\Settings' -ErrorAction SilentlyContinue; if ($reg -and $reg.NOC_GLOBAL_SETTING_TOASTS_ENABLED -eq 0) { Write-Output 'DND' } else { Write-Output 'NORMAL' } } catch { Write-Output 'NORMAL' }"`;
+  exec(psCommand, (err, stdout) => {
+    if (!err && stdout) {
+      isFocusAssistActive = stdout.trim() === "DND";
+    }
+  });
+}
+
+setInterval(checkFocusAssistState, 5000);
+checkFocusAssistState();
 
 const SESSION_FILE_PATH = path.join(app.getPath("userData"), "session.dat");
 
@@ -322,19 +338,33 @@ function openPairWindow(): void {
 }
 
 export function showReplyToast(notification: NotificationItem): void {
-  if (isPaused) return;
+  if (isPaused || isFocusAssistActive) return;
 
-  activeToastNotification = notification;
-
-  if (toastWindow) {
-    toastWindow.destroy();
-    toastWindow = null;
+  const existingIdx = activeToastNotifications.findIndex((n) => n.id === notification.id);
+  if (existingIdx >= 0) {
+    activeToastNotifications[existingIdx] = notification;
+  } else {
+    // Prepend new notification, cap stack at 4 visible cards
+    activeToastNotifications = [notification, ...activeToastNotifications.filter((n) => n.id !== notification.id)].slice(0, 4);
   }
 
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
-  const toastWidth = 400;
-  const toastHeight = 175;
+  const toastWidth = 420;
+  const estimatedCardHeight = 160;
+  const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+
+  if (toastWindow && !toastWindow.isDestroyed()) {
+    toastWindow.setBounds({
+      x: width - toastWidth - 24,
+      y: height - toastHeight - 24,
+      width: toastWidth,
+      height: toastHeight,
+    });
+    toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+    toastWindow.webContents.send("notification-received", notification);
+    return;
+  }
 
   toastWindow = new BrowserWindow({
     width: toastWidth,
@@ -363,6 +393,10 @@ export function showReplyToast(notification: NotificationItem): void {
     toastWindow.loadFile(path.join(__dirname, "../dist/index.html"), { hash: "toast" });
   }
 
+  toastWindow.webContents.once("did-finish-load", () => {
+    toastWindow?.webContents.send("toast-stack-updated", activeToastNotifications);
+  });
+
   toastWindow.on("closed", () => {
     toastWindow = null;
   });
@@ -381,7 +415,7 @@ function startNotificationListener(uid: string): void {
         currentNotifications = notifications;
         if (notifications.length > 0) {
           const newest = notifications[0];
-          if (newest && !newest.isRead && (!activeToastNotification || activeToastNotification.id !== newest.id)) {
+          if (newest && !newest.isRead && !activeToastNotifications.some((n) => n.id === newest.id)) {
             showReplyToast(newest);
           }
         }
@@ -423,7 +457,8 @@ async function handleSignOut(): Promise<void> {
 function registerIpcHandlers(): void {
   ipcMain.handle("get-initial-view", () => {
     return {
-      activeToast: activeToastNotification,
+      activeToast: activeToastNotifications[0] || null,
+      activeToasts: activeToastNotifications,
     };
   });
 
@@ -535,12 +570,32 @@ function registerIpcHandlers(): void {
     await handleSignOut();
   });
 
-  ipcMain.handle("dismiss-toast", () => {
-    if (toastWindow) {
-      toastWindow.close();
-      toastWindow = null;
+  ipcMain.handle("dismiss-toast", (_, notificationId?: string) => {
+    if (notificationId) {
+      activeToastNotifications = activeToastNotifications.filter((n) => n.id !== notificationId);
+    } else {
+      activeToastNotifications = [];
     }
-    activeToastNotification = null;
+
+    if (activeToastNotifications.length === 0) {
+      if (toastWindow && !toastWindow.isDestroyed()) {
+        toastWindow.close();
+      }
+      toastWindow = null;
+    } else if (toastWindow && !toastWindow.isDestroyed()) {
+      const primaryDisplay = screen.getPrimaryDisplay();
+      const { width, height } = primaryDisplay.workAreaSize;
+      const toastWidth = 420;
+      const estimatedCardHeight = 160;
+      const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+      toastWindow.setBounds({
+        x: width - toastWidth - 24,
+        y: height - toastHeight - 24,
+        width: toastWidth,
+        height: toastHeight,
+      });
+      toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+    }
   });
 
   ipcMain.handle("send-test-notification", async () => {
@@ -555,7 +610,7 @@ function registerIpcHandlers(): void {
       appName: "WhatsApp",
       conversationId: "conv-riya",
       title: "Riya Sharma",
-      text: "Hey! Echo notifications are syncing to Windows 🎉",
+      text: "Hey! Echo notifications are syncing to Windows.",
       postedAt: Date.now(),
       expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
       hasReplyAction: true,
@@ -577,6 +632,61 @@ function registerIpcHandlers(): void {
     return { success: true };
   });
 
+  ipcMain.handle("send-consecutive-test-notifications", async () => {
+    const session = getStoredSessionSync();
+    if (session) {
+      await restoreFirebaseAuth(session);
+    }
+
+    const now = Date.now();
+    const item1: NotificationItem = {
+      id: `notif-${now}-1`,
+      packageName: "com.whatsapp",
+      appName: "WhatsApp",
+      conversationId: "conv-riya",
+      title: "Riya Sharma",
+      text: "Hey! Are you free for a quick call regarding the project?",
+      postedAt: now,
+      expiresAt: now + 7 * 24 * 60 * 60 * 1000,
+      hasReplyAction: true,
+      isRead: false,
+      isGroup: false,
+      key: `key-${now}-1`,
+    };
+
+    const item2: NotificationItem = {
+      id: `notif-${now + 800}-2`,
+      packageName: "com.whatsapp",
+      appName: "WhatsApp",
+      conversationId: "conv-riya",
+      title: "Riya Sharma",
+      text: "Also check out the design link I just forwarded!",
+      postedAt: now + 800,
+      expiresAt: now + 7 * 24 * 60 * 60 * 1000,
+      hasReplyAction: true,
+      isRead: false,
+      isGroup: false,
+      key: `key-${now + 800}-2`,
+    };
+
+    if (session?.uid) {
+      try {
+        await writeNotification(session.uid, item1);
+        setTimeout(async () => {
+          await writeNotification(session.uid, item2).catch(() => {});
+        }, 1200);
+      } catch {
+        showReplyToast(item1);
+        setTimeout(() => showReplyToast(item2), 1200);
+      }
+    } else {
+      showReplyToast(item1);
+      setTimeout(() => showReplyToast(item2), 1200);
+    }
+
+    return { success: true };
+  });
+
   ipcMain.handle("send-reply", async (_, payload: CreateReplyPayload) => {
     const session = getStoredSessionSync();
     if (!session?.uid) {
@@ -588,12 +698,27 @@ function registerIpcHandlers(): void {
       // Automatically mark replied notification as seen/read in Firestore
       if (payload.notificationId) {
         await markNotificationRead(session.uid, payload.notificationId).catch(() => {});
+        activeToastNotifications = activeToastNotifications.filter((n) => n.id !== payload.notificationId);
       }
-      if (toastWindow) {
-        toastWindow.close();
+      if (activeToastNotifications.length === 0) {
+        if (toastWindow && !toastWindow.isDestroyed()) {
+          toastWindow.close();
+        }
         toastWindow = null;
+      } else if (toastWindow && !toastWindow.isDestroyed()) {
+        const primaryDisplay = screen.getPrimaryDisplay();
+        const { width, height } = primaryDisplay.workAreaSize;
+        const toastWidth = 420;
+        const estimatedCardHeight = 160;
+        const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+        toastWindow.setBounds({
+          x: width - toastWidth - 24,
+          y: height - toastHeight - 24,
+          width: toastWidth,
+          height: toastHeight,
+        });
+        toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
       }
-      activeToastNotification = null;
       return { success: true, replyId };
     } catch (err) {
       return { success: false, error: err instanceof Error ? err.message : "Failed to send reply" };
