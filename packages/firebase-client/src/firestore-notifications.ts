@@ -3,12 +3,14 @@ import {
   doc,
   setDoc,
   updateDoc,
+  deleteDoc,
   query,
   where,
   orderBy,
   limit,
   onSnapshot,
   getDocs,
+  writeBatch,
   type Unsubscribe,
 } from "firebase/firestore";
 import type { NotificationItem } from "@echo/shared-types";
@@ -61,6 +63,27 @@ export async function markNotificationRead(uid: string, notificationId: string):
   const db = getEchoFirestore();
   const notifDocRef = doc(db, `users/${uid}/notifications/${notificationId}`);
   await updateDoc(notifDocRef, { isRead: true });
+}
+
+export async function deleteNotification(uid: string, notificationId: string): Promise<void> {
+  const db = getEchoFirestore();
+  const notifDocRef = doc(db, `users/${uid}/notifications/${notificationId}`);
+  await deleteDoc(notifDocRef);
+}
+
+export async function deleteReadNotifications(uid: string): Promise<void> {
+  const db = getEchoFirestore();
+  const notifsCol = collection(db, `users/${uid}/notifications`);
+  const q = query(notifsCol, where("isRead", "==", true));
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) return;
+
+  const batch = writeBatch(db);
+  for (const docSnap of snapshot.docs) {
+    batch.delete(docSnap.ref);
+  }
+  await batch.commit();
 }
 
 export async function getMissedUnreadNotifications(uid: string): Promise<NotificationItem[]> {

@@ -13,9 +13,14 @@ export function subscribeToAuthState(callback: (user: User | null) => void): Uns
   return onAuthStateChanged(auth, callback);
 }
 
-export async function signInWithGoogleIdToken(idToken: string): Promise<User> {
+export function getCurrentUser(): User | null {
   const auth = getEchoAuth();
-  const credential = GoogleAuthProvider.credential(idToken);
+  return auth.currentUser;
+}
+
+export async function signInWithGoogleCredential(idToken: string, accessToken?: string): Promise<User> {
+  const auth = getEchoAuth();
+  const credential = GoogleAuthProvider.credential(idToken, accessToken);
   const result = await signInWithCredential(auth, credential);
   return result.user;
 }

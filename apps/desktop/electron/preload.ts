@@ -1,57 +1,59 @@
-import { contextBridge, ipcRenderer } from "electron";
-import type { NotificationItem, CreateReplyPayload, PairingPayload } from "@echo/shared-types";
+// Preload script for Echo desktop (CommonJS context for Electron)
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { contextBridge, ipcRenderer } = require("electron");
 
-// Narrow, explicit IPC bridge keeping the renderer strictly isolated
 const echoApi = {
   // App state & navigation
-  getInitialView: (): Promise<{ view: "toast" | "inbox" | "pair"; data?: unknown }> =>
-    ipcRenderer.invoke("get-initial-view"),
-  
-  closeWindow: (): Promise<void> =>
-    ipcRenderer.invoke("close-window"),
+  getInitialView: () => ipcRenderer.invoke("get-initial-view"),
+  closeWindow: () => ipcRenderer.invoke("close-window"),
+  minimizeWindow: () => ipcRenderer.invoke("minimize-window"),
+  maximizeWindow: () => ipcRenderer.invoke("maximize-window"),
+  openInbox: () => ipcRenderer.invoke("open-inbox"),
+  openPairView: () => ipcRenderer.invoke("open-pair-view"),
 
-  minimizeWindow: (): Promise<void> =>
-    ipcRenderer.invoke("minimize-window"),
-
-  maximizeWindow: (): Promise<void> =>
-    ipcRenderer.invoke("maximize-window"),
-
-  // Safe storage credentials
-  getStoredSession: (): Promise<{ uid: string; email: string } | null> =>
-    ipcRenderer.invoke("get-stored-session"),
-
-  storeSession: (session: { uid: string; email: string }): Promise<boolean> =>
-    ipcRenderer.invoke("store-session", session),
-
-  clearStoredSession: (): Promise<void> =>
-    ipcRenderer.invoke("clear-stored-session"),
+  // Safe storage credentials & OAuth
+  startGoogleAuth: () => ipcRenderer.invoke("start-google-auth"),
+  getStoredSession: () => ipcRenderer.invoke("get-stored-session"),
+  storeSession: (session: unknown) => ipcRenderer.invoke("store-session", session),
+  clearStoredSession: () => ipcRenderer.invoke("clear-stored-session"),
+  signOut: () => ipcRenderer.invoke("sign-out"),
 
   // Toast / Reply
-  sendReply: (payload: CreateReplyPayload): Promise<{ success: boolean; error?: string }> =>
-    ipcRenderer.invoke("send-reply", payload),
+  sendReply: (payload: unknown) => ipcRenderer.invoke("send-reply", payload),
+  dismissToast: (notificationId: string) => ipcRenderer.invoke("dismiss-toast", notificationId),
+  sendTestNotification: () => ipcRenderer.invoke("send-test-notification"),
 
-  dismissToast: (notificationId: string): Promise<void> =>
-    ipcRenderer.invoke("dismiss-toast", notificationId),
+  // Notifications
+  getNotifications: () => ipcRenderer.invoke("get-notifications"),
+  markAsRead: (notificationId: string) => ipcRenderer.invoke("mark-notification-read", notificationId),
+  markAllAsRead: () => ipcRenderer.invoke("mark-all-read"),
+  clearReadNotifications: () => ipcRenderer.invoke("clear-read-notifications"),
 
   // Pairing
-  createPairingSession: (desktopName: string): Promise<PairingPayload> =>
-    ipcRenderer.invoke("create-pairing-session", desktopName),
+  createPairingSession: (desktopName: string) => ipcRenderer.invoke("create-pairing-session", desktopName),
 
   // Autostart setting
-  getAutoStart: (): Promise<boolean> =>
-    ipcRenderer.invoke("get-autostart"),
-
-  setAutoStart: (enabled: boolean): Promise<void> =>
-    ipcRenderer.invoke("set-autostart", enabled),
+  getAutoStart: () => ipcRenderer.invoke("get-autostart"),
+  setAutoStart: (enabled: boolean) => ipcRenderer.invoke("set-autostart", enabled),
 
   // Subscriptions from main process
-  onNotificationReceived: (callback: (notification: NotificationItem) => void) => {
-    const handler = (_: unknown, notif: NotificationItem) => callback(notif);
+  onNotificationReceived: (callback: (notification: unknown) => void) => {
+    const handler = (_: unknown, notif: unknown) => callback(notif);
     ipcRenderer.on("notification-received", handler);
     return () => ipcRenderer.removeListener("notification-received", handler);
   },
-};
 
-export type EchoApi = typeof echoApi;
+  onNotificationsUpdated: (callback: (notifications: unknown) => void) => {
+    const handler = (_: unknown, notifs: unknown) => callback(notifs);
+    ipcRenderer.on("notifications-updated", handler);
+    return () => ipcRenderer.removeListener("notifications-updated", handler);
+  },
+
+  onSessionChanged: (callback: (session: unknown) => void) => {
+    const handler = (_: unknown, s: unknown) => callback(s);
+    ipcRenderer.on("session-changed", handler);
+    return () => ipcRenderer.removeListener("session-changed", handler);
+  },
+};
 
 contextBridge.exposeInMainWorld("echoApi", echoApi);

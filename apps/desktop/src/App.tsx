@@ -26,7 +26,7 @@ export function App(): ReactElement {
   }, []);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-screen bg-transparent">
       {currentView === "toast" && <ToastView />}
       {currentView === "inbox" && <InboxView />}
       {currentView === "pair" && <PairView />}

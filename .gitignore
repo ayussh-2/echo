@@ -41,3 +41,4 @@ Thumbs.db
 *.pem
 
 temp/
+dist-electron/
