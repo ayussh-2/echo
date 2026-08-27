@@ -1,0 +1,18 @@
+{
+  "name": "@echo/crypto",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@echo/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@echo/tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

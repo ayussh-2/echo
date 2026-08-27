@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #ff5e3a;
+  --primary-2: #ff8a65;
+  --sky: #38bdf8;
+  --violet: #c084fc;
+  --pink: #ff9a9e;
+  --amber: #ffd166;
+  --teal: #326578;
+  --lime: #556500;
+  --ink: #1a1a1a;
+  --ink-soft: #55555a;
+  --ink-faint: #8b8b90;
+  --line: rgba(0, 0, 0, 0.08);
+  --glass: rgba(255, 255, 255, 0.45);
+  --glass-strong: rgba(255, 255, 255, 0.7);
+}
+
+.msi {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass-panel {
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.glass-card {
+  background: var(--glass-strong);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(700px 500px at 8% 0%, rgba(56, 189, 248, 0.16), transparent 60%),
+    radial-gradient(600px 500px at 95% 15%, rgba(192, 132, 252, 0.16), transparent 60%),
+    radial-gradient(700px 600px at 40% 90%, rgba(255, 94, 58, 0.1), transparent 60%);
+}
+
+.btn-coral {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  box-shadow: 0 6px 18px rgba(255, 94, 58, 0.3);
+}
+
+.btn-coral:hover {
+  opacity: 0.95;
+  box-shadow: 0 8px 22px rgba(255, 94, 58, 0.4);
+}
