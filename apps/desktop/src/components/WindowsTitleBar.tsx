@@ -21,9 +21,14 @@ export function WindowsTitleBar({
     <header className="h-9 w-full flex items-stretch justify-between border-b border-black/[0.06] bg-white/40 backdrop-blur-md select-none text-ink-soft relative z-50">
       {/* Draggable Title Area */}
       <div
-        className="flex-1 h-full pl-3.5 flex items-center gap-2 cursor-default"
+        className="flex-1 h-full pl-3 flex items-center gap-2 cursor-default"
         style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
       >
+        <img
+          src="/icon.svg"
+          alt="Echo"
+          className="w-4 h-4 rounded-sm shadow-xs pointer-events-none"
+        />
         <span className="text-xs font-bold tracking-tight text-ink">{title}</span>
       </div>
 

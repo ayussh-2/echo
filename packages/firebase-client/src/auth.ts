@@ -2,6 +2,7 @@ import {
   onAuthStateChanged,
   signOut as fbSignOut,
   signInWithCredential,
+  signInAnonymously,
   GoogleAuthProvider,
   type User,
   type Unsubscribe,
@@ -22,6 +23,13 @@ export async function signInWithGoogleCredential(idToken: string, accessToken?: 
   const auth = getEchoAuth();
   const credential = GoogleAuthProvider.credential(idToken, accessToken);
   const result = await signInWithCredential(auth, credential);
+  return result.user;
+}
+
+export async function signInAnonymouslyUser(): Promise<User> {
+  const auth = getEchoAuth();
+  if (auth.currentUser) return auth.currentUser;
+  const result = await signInAnonymously(auth);
   return result.user;
 }
 

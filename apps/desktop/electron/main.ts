@@ -1,9 +1,23 @@
-import { app, BrowserWindow, Tray, Menu, ipcMain, screen, safeStorage, nativeImage, powerMonitor } from "electron";
+import {
+  app,
+  BrowserWindow,
+  Tray,
+  Menu,
+  ipcMain,
+  screen,
+  safeStorage,
+  nativeImage,
+  powerMonitor,
+} from "electron";
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createPairingPayload } from "@echo/crypto";
-import type { NotificationItem, CreateReplyPayload, PairingPayload } from "@echo/shared-types";
+import type {
+  NotificationItem,
+  CreateReplyPayload,
+  PairingPayload,
+} from "@echo/shared-types";
 import {
   initializeEchoFirebase,
   getEchoAuth,
@@ -17,7 +31,7 @@ import {
   createPairingSession,
   subscribeToPairingSession,
 } from "@echo/firebase-client";
-import { performGoogleOAuthFlow } from "./oauth";
+import { performGoogleOAuthFlow, refreshGoogleIdToken } from "./oauth";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,7 +62,10 @@ function loadEnvironmentVariables(): void {
           if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
             const idx = trimmed.indexOf("=");
             const key = trimmed.slice(0, idx).trim();
-            const val = trimmed.slice(idx + 1).trim().replace(/^["']|["']$/g, "");
+            const val = trimmed
+              .slice(idx + 1)
+              .trim()
+              .replace(/^["']|["']$/g, "");
             process.env[key] = val;
           }
         }
@@ -68,6 +85,11 @@ export interface StoredSession {
   photoUrl?: string;
   idToken?: string;
   refreshToken?: string;
+}
+
+// Set AppUserModelId on Windows for proper taskbar icon and notifications
+if (process.platform === "win32") {
+  app.setAppUserModelId("com.echo.notificationbridge");
 }
 
 // Prevent multiple instances
@@ -106,10 +128,13 @@ const SESSION_FILE_PATH = path.join(app.getPath("userData"), "session.dat");
 // Initialize Firebase SDK
 const firebaseConfig = {
   apiKey: process.env.VITE_FIREBASE_API_KEY || "demo-api-key",
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || "echo-notif.firebaseapp.com",
+  authDomain:
+    process.env.VITE_FIREBASE_AUTH_DOMAIN || "echo-notif.firebaseapp.com",
   projectId: process.env.VITE_FIREBASE_PROJECT_ID || "echo-notif",
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || "echo-notif.appspot.com",
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "0000000000",
+  storageBucket:
+    process.env.VITE_FIREBASE_STORAGE_BUCKET || "echo-notif.appspot.com",
+  messagingSenderId:
+    process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "0000000000",
   appId: process.env.VITE_FIREBASE_APP_ID || "1:0000000000:web:0000000000",
 };
 
@@ -159,24 +184,68 @@ function clearSessionSync(): void {
 }
 
 async function restoreFirebaseAuth(session: StoredSession): Promise<boolean> {
-  if (!session.idToken) return false;
-  try {
-    const auth = getEchoAuth();
-    if (!auth.currentUser || auth.currentUser.uid !== session.uid) {
-      await signInWithGoogleCredential(session.idToken);
-    }
+  const auth = getEchoAuth();
+  if (auth.currentUser && auth.currentUser.uid === session.uid) {
     return true;
-  } catch (err) {
-    console.warn("Could not restore Firebase session with cached token:", err);
-    return false;
   }
+
+  // 1. First attempt to sign in with cached idToken
+  if (session.idToken) {
+    try {
+      await signInWithGoogleCredential(session.idToken);
+      return true;
+    } catch (err: unknown) {
+      const isStale =
+        (err &&
+          typeof err === "object" &&
+          "code" in err &&
+          (err as { code: string }).code === "auth/invalid-credential") ||
+        (err instanceof Error && err.message.includes("stale"));
+
+      if (!isStale) {
+        console.warn(
+          "Could not restore Firebase session with cached token:",
+          err,
+        );
+      }
+    }
+  }
+
+  // 2. If token is stale or missing, refresh it using the stored Google refresh_token
+  if (session.refreshToken) {
+    try {
+      const clientId = process.env.VITE_GOOGLE_CLIENT_ID || "";
+      const clientSecret = process.env.VITE_GOOGLE_CLIENT_SECRET;
+      if (clientId) {
+        const { idToken, accessToken } = await refreshGoogleIdToken(
+          clientId,
+          session.refreshToken,
+          clientSecret,
+        );
+
+        // Sign in with the fresh token
+        await signInWithGoogleCredential(idToken, accessToken);
+
+        // Update stored session with new idToken
+        session.idToken = idToken;
+        storeSessionSync(session);
+        return true;
+      }
+    } catch (refreshErr) {
+      console.warn("Failed to refresh Google token automatically:", refreshErr);
+    }
+  }
+
+  return false;
 }
 
 function updateTrayMenu(): void {
   if (!tray) return;
 
   const session = getStoredSessionSync();
-  const emailText = session?.email ? `Signed in as ${session.email}` : "Not signed in";
+  const emailText = session?.email
+    ? `Signed in as ${session.email}`
+    : "Not signed in";
   const unreadCount = currentNotifications.filter((n) => !n.isRead).length;
 
   const contextMenu = Menu.buildFromTemplate([
@@ -222,15 +291,62 @@ function updateTrayMenu(): void {
   ]);
 
   tray.setContextMenu(contextMenu);
-  tray.setToolTip(`Echo — ${unreadCount > 0 ? `${unreadCount} unread` : "Listening"}`);
+  tray.setToolTip(
+    `Echo — ${unreadCount > 0 ? `${unreadCount} unread` : "Listening"}`,
+  );
+}
+
+function getAppIcon(): Electron.NativeImage {
+  const candidates = [
+    path.join(__dirname, "../public/icon.png"),
+    path.join(__dirname, "../dist/icon.png"),
+    path.join(__dirname, "public/icon.png"),
+    path.join(process.cwd(), "apps/desktop/public/icon.png"),
+    path.join(process.cwd(), "public/icon.png"),
+    path.join(process.resourcesPath || "", "icon.png"),
+    path.join(process.resourcesPath || "", "public/icon.png"),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      const img = nativeImage.createFromPath(p);
+      if (!img.isEmpty()) return img;
+    }
+  }
+  return nativeImage.createEmpty();
+}
+
+function getTrayIcon(): Electron.NativeImage {
+  const candidates = [
+    path.join(__dirname, "../public/32x32.png"),
+    path.join(__dirname, "../public/16x16.png"),
+    path.join(__dirname, "../public/favicon.png"),
+    path.join(__dirname, "../dist/32x32.png"),
+    path.join(__dirname, "../dist/favicon.png"),
+    path.join(process.cwd(), "apps/desktop/public/32x32.png"),
+    path.join(process.cwd(), "public/32x32.png"),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      const img = nativeImage.createFromPath(p);
+      if (!img.isEmpty()) return img;
+    }
+  }
+  const appIcon = getAppIcon();
+  if (!appIcon.isEmpty()) {
+    return appIcon.resize({ width: 16, height: 16 });
+  }
+  return nativeImage.createEmpty();
 }
 
 function createTray(): void {
-  const icon = nativeImage.createEmpty();
+  const icon = getTrayIcon();
   tray = new Tray(icon);
   updateTrayMenu();
 
   tray.on("double-click", () => {
+    openInboxWindow();
+  });
+  tray.on("click", () => {
     openInboxWindow();
   });
 }
@@ -254,11 +370,14 @@ function openInboxWindow(): void {
     if (process.env.VITE_DEV_SERVER_URL) {
       mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#inbox`);
     } else {
-      mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), { hash: "inbox" });
+      mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), {
+        hash: "inbox",
+      });
     }
     return;
   }
 
+  const appIcon = getAppIcon();
   mainWindow = new BrowserWindow({
     width: 480,
     height: 640,
@@ -266,6 +385,7 @@ function openInboxWindow(): void {
     frame: false,
     transparent: true,
     backgroundMaterial: "acrylic",
+    icon: !appIcon.isEmpty() ? appIcon : undefined,
     minimizable: true,
     maximizable: false,
     resizable: false,
@@ -280,7 +400,9 @@ function openInboxWindow(): void {
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#inbox`);
   } else {
-    mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), { hash: "inbox" });
+    mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), {
+      hash: "inbox",
+    });
   }
 
   mainWindow.once("ready-to-show", () => {
@@ -299,11 +421,14 @@ function openPairWindow(): void {
     if (process.env.VITE_DEV_SERVER_URL) {
       mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#pair`);
     } else {
-      mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), { hash: "pair" });
+      mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), {
+        hash: "pair",
+      });
     }
     return;
   }
 
+  const appIcon = getAppIcon();
   mainWindow = new BrowserWindow({
     width: 480,
     height: 640,
@@ -311,6 +436,7 @@ function openPairWindow(): void {
     frame: false,
     transparent: true,
     backgroundMaterial: "acrylic",
+    icon: !appIcon.isEmpty() ? appIcon : undefined,
     minimizable: true,
     maximizable: false,
     resizable: false,
@@ -325,7 +451,9 @@ function openPairWindow(): void {
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#pair`);
   } else {
-    mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), { hash: "pair" });
+    mainWindow.loadFile(path.join(__dirname, "../dist/index.html"), {
+      hash: "pair",
+    });
   }
 
   mainWindow.once("ready-to-show", () => {
@@ -340,19 +468,27 @@ function openPairWindow(): void {
 export function showReplyToast(notification: NotificationItem): void {
   if (isPaused || isFocusAssistActive) return;
 
-  const existingIdx = activeToastNotifications.findIndex((n) => n.id === notification.id);
+  const existingIdx = activeToastNotifications.findIndex(
+    (n) => n.id === notification.id,
+  );
   if (existingIdx >= 0) {
     activeToastNotifications[existingIdx] = notification;
   } else {
     // Prepend new notification, cap stack at 4 visible cards
-    activeToastNotifications = [notification, ...activeToastNotifications.filter((n) => n.id !== notification.id)].slice(0, 4);
+    activeToastNotifications = [
+      notification,
+      ...activeToastNotifications.filter((n) => n.id !== notification.id),
+    ].slice(0, 4);
   }
 
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
   const toastWidth = 420;
   const estimatedCardHeight = 160;
-  const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+  const toastHeight = Math.min(
+    height - 40,
+    activeToastNotifications.length * estimatedCardHeight + 20,
+  );
 
   if (toastWindow && !toastWindow.isDestroyed()) {
     toastWindow.setBounds({
@@ -361,11 +497,15 @@ export function showReplyToast(notification: NotificationItem): void {
       width: toastWidth,
       height: toastHeight,
     });
-    toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+    toastWindow.webContents.send(
+      "toast-stack-updated",
+      activeToastNotifications,
+    );
     toastWindow.webContents.send("notification-received", notification);
     return;
   }
 
+  const appIcon = getAppIcon();
   toastWindow = new BrowserWindow({
     width: toastWidth,
     height: toastHeight,
@@ -379,6 +519,7 @@ export function showReplyToast(notification: NotificationItem): void {
     skipTaskbar: true,
     resizable: false,
     focusable: true,
+    icon: !appIcon.isEmpty() ? appIcon : undefined,
     webPreferences: {
       preload: getPreloadPath(),
       contextIsolation: true,
@@ -390,11 +531,16 @@ export function showReplyToast(notification: NotificationItem): void {
   if (process.env.VITE_DEV_SERVER_URL) {
     toastWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#toast`);
   } else {
-    toastWindow.loadFile(path.join(__dirname, "../dist/index.html"), { hash: "toast" });
+    toastWindow.loadFile(path.join(__dirname, "../dist/index.html"), {
+      hash: "toast",
+    });
   }
 
   toastWindow.webContents.once("did-finish-load", () => {
-    toastWindow?.webContents.send("toast-stack-updated", activeToastNotifications);
+    toastWindow?.webContents.send(
+      "toast-stack-updated",
+      activeToastNotifications,
+    );
   });
 
   toastWindow.on("closed", () => {
@@ -415,7 +561,11 @@ function startNotificationListener(uid: string): void {
         currentNotifications = notifications;
         if (notifications.length > 0) {
           const newest = notifications[0];
-          if (newest && !newest.isRead && !activeToastNotifications.some((n) => n.id === newest.id)) {
+          if (
+            newest &&
+            !newest.isRead &&
+            !activeToastNotifications.some((n) => n.id === newest.id)
+          ) {
             showReplyToast(newest);
           }
         }
@@ -426,7 +576,7 @@ function startNotificationListener(uid: string): void {
       },
       () => {
         // Quiet fallback
-      }
+      },
     );
   } catch {
     // Offline fallback
@@ -463,21 +613,30 @@ function registerIpcHandlers(): void {
   });
 
   ipcMain.handle("close-window", (event) => {
-    const win = BrowserWindow.fromWebContents(event.sender) || BrowserWindow.getFocusedWindow() || mainWindow;
+    const win =
+      BrowserWindow.fromWebContents(event.sender) ||
+      BrowserWindow.getFocusedWindow() ||
+      mainWindow;
     if (win) {
       win.close();
     }
   });
 
   ipcMain.handle("minimize-window", (event) => {
-    const win = BrowserWindow.fromWebContents(event.sender) || BrowserWindow.getFocusedWindow() || mainWindow;
+    const win =
+      BrowserWindow.fromWebContents(event.sender) ||
+      BrowserWindow.getFocusedWindow() ||
+      mainWindow;
     if (win) {
       win.minimize();
     }
   });
 
   ipcMain.handle("maximize-window", (event) => {
-    const win = BrowserWindow.fromWebContents(event.sender) || BrowserWindow.getFocusedWindow() || mainWindow;
+    const win =
+      BrowserWindow.fromWebContents(event.sender) ||
+      BrowserWindow.getFocusedWindow() ||
+      mainWindow;
     if (win) {
       if (win.isMaximized()) {
         win.unmaximize();
@@ -506,7 +665,10 @@ function registerIpcHandlers(): void {
       }
 
       const authResult = await performGoogleOAuthFlow(clientId, clientSecret);
-      const user = await signInWithGoogleCredential(authResult.idToken, authResult.accessToken);
+      const user = await signInWithGoogleCredential(
+        authResult.idToken,
+        authResult.accessToken,
+      );
 
       const session: StoredSession = {
         uid: user.uid,
@@ -572,7 +734,9 @@ function registerIpcHandlers(): void {
 
   ipcMain.handle("dismiss-toast", (_, notificationId?: string) => {
     if (notificationId) {
-      activeToastNotifications = activeToastNotifications.filter((n) => n.id !== notificationId);
+      activeToastNotifications = activeToastNotifications.filter(
+        (n) => n.id !== notificationId,
+      );
     } else {
       activeToastNotifications = [];
     }
@@ -587,14 +751,20 @@ function registerIpcHandlers(): void {
       const { width, height } = primaryDisplay.workAreaSize;
       const toastWidth = 420;
       const estimatedCardHeight = 160;
-      const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+      const toastHeight = Math.min(
+        height - 40,
+        activeToastNotifications.length * estimatedCardHeight + 20,
+      );
       toastWindow.setBounds({
         x: width - toastWidth - 24,
         y: height - toastHeight - 24,
         width: toastWidth,
         height: toastHeight,
       });
-      toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+      toastWindow.webContents.send(
+        "toast-stack-updated",
+        activeToastNotifications,
+      );
     }
   });
 
@@ -697,8 +867,12 @@ function registerIpcHandlers(): void {
       const replyId = await createReply(session.uid, payload);
       // Automatically mark replied notification as seen/read in Firestore
       if (payload.notificationId) {
-        await markNotificationRead(session.uid, payload.notificationId).catch(() => {});
-        activeToastNotifications = activeToastNotifications.filter((n) => n.id !== payload.notificationId);
+        await markNotificationRead(session.uid, payload.notificationId).catch(
+          () => {},
+        );
+        activeToastNotifications = activeToastNotifications.filter(
+          (n) => n.id !== payload.notificationId,
+        );
       }
       if (activeToastNotifications.length === 0) {
         if (toastWindow && !toastWindow.isDestroyed()) {
@@ -710,18 +884,27 @@ function registerIpcHandlers(): void {
         const { width, height } = primaryDisplay.workAreaSize;
         const toastWidth = 420;
         const estimatedCardHeight = 160;
-        const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+        const toastHeight = Math.min(
+          height - 40,
+          activeToastNotifications.length * estimatedCardHeight + 20,
+        );
         toastWindow.setBounds({
           x: width - toastWidth - 24,
           y: height - toastHeight - 24,
           width: toastWidth,
           height: toastHeight,
         });
-        toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+        toastWindow.webContents.send(
+          "toast-stack-updated",
+          activeToastNotifications,
+        );
       }
       return { success: true, replyId };
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : "Failed to send reply" };
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : "Failed to send reply",
+      };
     }
   });
 
@@ -729,15 +912,18 @@ function registerIpcHandlers(): void {
     return currentNotifications;
   });
 
-  ipcMain.handle("mark-notification-read", async (_, notificationId: string) => {
-    const session = getStoredSessionSync();
-    if (!session?.uid) return;
-    try {
-      await markNotificationRead(session.uid, notificationId);
-    } catch {
-      // Offline fallback
-    }
-  });
+  ipcMain.handle(
+    "mark-notification-read",
+    async (_, notificationId: string) => {
+      const session = getStoredSessionSync();
+      if (!session?.uid) return;
+      try {
+        await markNotificationRead(session.uid, notificationId);
+      } catch {
+        // Offline fallback
+      }
+    },
+  );
 
   ipcMain.handle("mark-all-read", async () => {
     const session = getStoredSessionSync();
@@ -757,34 +943,40 @@ function registerIpcHandlers(): void {
       await deleteReadNotifications(session.uid);
       return { success: true };
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : "Failed to clear seen" };
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : "Failed to clear seen",
+      };
     }
   });
 
-  ipcMain.handle("create-pairing-session", async (_, desktopName: string): Promise<PairingPayload> => {
-    const session = getStoredSessionSync();
-    const uid = session?.uid ?? "unknown-user";
-    const payload = createPairingPayload(uid, desktopName);
+  ipcMain.handle(
+    "create-pairing-session",
+    async (_, desktopName: string): Promise<PairingPayload> => {
+      const session = getStoredSessionSync();
+      const uid = session?.uid ?? "unknown-user";
+      const payload = createPairingPayload(uid, desktopName);
 
-    try {
-      await createPairingSession(payload);
+      try {
+        await createPairingSession(payload);
 
-      // Listen for mobile confirmation
-      if (pairingUnsubscribe) pairingUnsubscribe();
-      pairingUnsubscribe = subscribeToPairingSession(uid, (data) => {
-        if (data?.confirmation) {
-          // Pairing verified!
-          if (mainWindow) {
-            openInboxWindow();
+        // Listen for mobile confirmation
+        if (pairingUnsubscribe) pairingUnsubscribe();
+        pairingUnsubscribe = subscribeToPairingSession(uid, (data) => {
+          if (data?.confirmation) {
+            // Pairing verified!
+            if (mainWindow) {
+              openInboxWindow();
+            }
           }
-        }
-      });
-    } catch {
-      // Offline fallback
-    }
+        });
+      } catch {
+        // Offline fallback
+      }
 
-    return payload;
-  });
+      return payload;
+    },
+  );
 
   ipcMain.handle("get-autostart", () => {
     return app.getLoginItemSettings().openAtLogin;

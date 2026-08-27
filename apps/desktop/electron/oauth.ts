@@ -247,9 +247,6 @@ export function performGoogleOAuthFlow(
       authUrl.searchParams.set("scope", "openid email profile");
       authUrl.searchParams.set("code_challenge", challenge);
       authUrl.searchParams.set("code_challenge_method", "S256");
-      authUrl.searchParams.set("state", state);
-      authUrl.searchParams.set("prompt", "select_account");
-
       shell.openExternal(authUrl.toString());
     });
 
@@ -258,4 +255,48 @@ export function performGoogleOAuthFlow(
       reject(err);
     });
   });
+}
+
+/**
+ * Refreshes an expired Google ID Token using the stored refresh_token.
+ */
+export async function refreshGoogleIdToken(
+  clientId: string,
+  refreshToken: string,
+  clientSecret?: string
+): Promise<{ idToken: string; accessToken?: string }> {
+  const tokenParams = new URLSearchParams({
+    client_id: clientId,
+    refresh_token: refreshToken,
+    grant_type: "refresh_token",
+  });
+
+  if (clientSecret) {
+    tokenParams.append("client_secret", clientSecret);
+  }
+
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: tokenParams.toString(),
+  });
+
+  if (!tokenResponse.ok) {
+    const errBody = await tokenResponse.text();
+    throw new Error(`Failed to refresh Google token: ${tokenResponse.status} ${errBody}`);
+  }
+
+  const tokenData = (await tokenResponse.json()) as {
+    id_token?: string;
+    access_token?: string;
+  };
+
+  if (!tokenData.id_token) {
+    throw new Error("No id_token returned during refresh");
+  }
+
+  return {
+    idToken: tokenData.id_token,
+    accessToken: tokenData.access_token,
+  };
 }

@@ -1,4 +1,5 @@
-import { shell, app as app$1, powerMonitor, safeStorage, nativeImage, Tray, ipcMain, BrowserWindow, screen, Menu } from "electron";
+var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+import { shell, app as app$1, powerMonitor, safeStorage, Tray, ipcMain, BrowserWindow, screen, Menu, nativeImage } from "electron";
 import path$1 from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -399,8 +400,8 @@ const getDefaults = () => {
   }
 };
 const getDefaultEmulatorHost = (productName) => {
-  var _a, _b;
-  return (_b = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.emulatorHosts) === null || _b === void 0 ? void 0 : _b[productName];
+  var _a2, _b2;
+  return (_b2 = (_a2 = getDefaults()) === null || _a2 === void 0 ? void 0 : _a2.emulatorHosts) === null || _b2 === void 0 ? void 0 : _b2[productName];
 };
 const getDefaultEmulatorHostnameAndPort = (productName) => {
   const host = getDefaultEmulatorHost(productName);
@@ -419,8 +420,8 @@ const getDefaultEmulatorHostnameAndPort = (productName) => {
   }
 };
 const getDefaultAppConfig = () => {
-  var _a;
-  return (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.config;
+  var _a2;
+  return (_a2 = getDefaults()) === null || _a2 === void 0 ? void 0 : _a2.config;
 };
 /**
  * @license
@@ -493,7 +494,7 @@ function isCloudWorkstation(url) {
   try {
     const host = url.startsWith("http://") || url.startsWith("https://") ? new URL(url).hostname : url;
     return host.endsWith(".cloudworkstations.dev");
-  } catch (_a) {
+  } catch (_a2) {
     return false;
   }
 }
@@ -711,8 +712,8 @@ function isMobileCordova() {
   !!(window["cordova"] || window["phonegap"] || window["PhoneGap"]) && /ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(getUA());
 }
 function isNode() {
-  var _a;
-  const forceEnvironment = (_a = getDefaults()) === null || _a === void 0 ? void 0 : _a.forceEnvironment;
+  var _a2;
+  const forceEnvironment = (_a2 = getDefaults()) === null || _a2 === void 0 ? void 0 : _a2.forceEnvironment;
   if (forceEnvironment === "node") {
     return true;
   } else if (forceEnvironment === "browser") {
@@ -761,8 +762,8 @@ function validateIndexedDBOpenable() {
         preExist = false;
       };
       request.onerror = () => {
-        var _a;
-        reject(((_a = request.error) === null || _a === void 0 ? void 0 : _a.message) || "");
+        var _a2;
+        reject(((_a2 = request.error) === null || _a2 === void 0 ? void 0 : _a2.message) || "");
       };
     } catch (error2) {
       reject(error2);
@@ -1156,9 +1157,9 @@ class Provider {
     return this.instancesDeferred.get(normalizedIdentifier).promise;
   }
   getImmediate(options) {
-    var _a;
+    var _a2;
     const normalizedIdentifier = this.normalizeInstanceIdentifier(options === null || options === void 0 ? void 0 : options.identifier);
-    const optional = (_a = options === null || options === void 0 ? void 0 : options.optional) !== null && _a !== void 0 ? _a : false;
+    const optional = (_a2 = options === null || options === void 0 ? void 0 : options.optional) !== null && _a2 !== void 0 ? _a2 : false;
     if (this.isInitialized(normalizedIdentifier) || this.shouldAutoInitialize()) {
       try {
         return this.getOrInitializeService({
@@ -1263,9 +1264,9 @@ class Provider {
    * @returns a function to unregister the callback
    */
   onInit(callback, identifier) {
-    var _a;
+    var _a2;
     const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
-    const existingCallbacks = (_a = this.onInitCallbacks.get(normalizedIdentifier)) !== null && _a !== void 0 ? _a : /* @__PURE__ */ new Set();
+    const existingCallbacks = (_a2 = this.onInitCallbacks.get(normalizedIdentifier)) !== null && _a2 !== void 0 ? _a2 : /* @__PURE__ */ new Set();
     existingCallbacks.add(callback);
     this.onInitCallbacks.set(normalizedIdentifier, existingCallbacks);
     const existingInstance = this.instances.get(normalizedIdentifier);
@@ -1288,7 +1289,7 @@ class Provider {
     for (const callback of callbacks) {
       try {
         callback(instance, identifier);
-      } catch (_a) {
+      } catch (_a2) {
       }
     }
   }
@@ -1305,7 +1306,7 @@ class Provider {
       if (this.component.onInstanceCreated) {
         try {
           this.component.onInstanceCreated(this.container, instanceIdentifier, instance);
-        } catch (_a) {
+        } catch (_a2) {
         }
       }
     }
@@ -2110,8 +2111,8 @@ function getApps() {
   return Array.from(_apps.values());
 }
 function registerVersion(libraryKeyOrName, version2, variant) {
-  var _a;
-  let library = (_a = PLATFORM_LOG_STRING[libraryKeyOrName]) !== null && _a !== void 0 ? _a : libraryKeyOrName;
+  var _a2;
+  let library = (_a2 = PLATFORM_LOG_STRING[libraryKeyOrName]) !== null && _a2 !== void 0 ? _a2 : libraryKeyOrName;
   if (variant) {
     library += `-${variant}`;
   }
@@ -2257,14 +2258,14 @@ class HeartbeatServiceImpl {
    * already logged, subsequent calls to this function in the same day will be ignored.
    */
   async triggerHeartbeat() {
-    var _a, _b;
+    var _a2, _b2;
     try {
       const platformLogger = this.container.getProvider("platform-logger").getImmediate();
       const agent = platformLogger.getPlatformInfoString();
       const date = getUTCDateString();
-      if (((_a = this._heartbeatsCache) === null || _a === void 0 ? void 0 : _a.heartbeats) == null) {
+      if (((_a2 = this._heartbeatsCache) === null || _a2 === void 0 ? void 0 : _a2.heartbeats) == null) {
         this._heartbeatsCache = await this._heartbeatsCachePromise;
-        if (((_b = this._heartbeatsCache) === null || _b === void 0 ? void 0 : _b.heartbeats) == null) {
+        if (((_b2 = this._heartbeatsCache) === null || _b2 === void 0 ? void 0 : _b2.heartbeats) == null) {
           return;
         }
       }
@@ -2290,12 +2291,12 @@ class HeartbeatServiceImpl {
    * returns an empty string.
    */
   async getHeartbeatsHeader() {
-    var _a;
+    var _a2;
     try {
       if (this._heartbeatsCache === null) {
         await this._heartbeatsCachePromise;
       }
-      if (((_a = this._heartbeatsCache) === null || _a === void 0 ? void 0 : _a.heartbeats) == null || this._heartbeatsCache.heartbeats.length === 0) {
+      if (((_a2 = this._heartbeatsCache) === null || _a2 === void 0 ? void 0 : _a2.heartbeats) == null || this._heartbeatsCache.heartbeats.length === 0) {
         return "";
       }
       const date = getUTCDateString();
@@ -2378,28 +2379,28 @@ class HeartbeatStorageImpl {
   }
   // overwrite the storage with the provided heartbeats
   async overwrite(heartbeatsObject) {
-    var _a;
+    var _a2;
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
       return;
     } else {
       const existingHeartbeatsObject = await this.read();
       return writeHeartbeatsToIndexedDB(this.app, {
-        lastSentHeartbeatDate: (_a = heartbeatsObject.lastSentHeartbeatDate) !== null && _a !== void 0 ? _a : existingHeartbeatsObject.lastSentHeartbeatDate,
+        lastSentHeartbeatDate: (_a2 = heartbeatsObject.lastSentHeartbeatDate) !== null && _a2 !== void 0 ? _a2 : existingHeartbeatsObject.lastSentHeartbeatDate,
         heartbeats: heartbeatsObject.heartbeats
       });
     }
   }
   // add heartbeats
   async add(heartbeatsObject) {
-    var _a;
+    var _a2;
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
       return;
     } else {
       const existingHeartbeatsObject = await this.read();
       return writeHeartbeatsToIndexedDB(this.app, {
-        lastSentHeartbeatDate: (_a = heartbeatsObject.lastSentHeartbeatDate) !== null && _a !== void 0 ? _a : existingHeartbeatsObject.lastSentHeartbeatDate,
+        lastSentHeartbeatDate: (_a2 = heartbeatsObject.lastSentHeartbeatDate) !== null && _a2 !== void 0 ? _a2 : existingHeartbeatsObject.lastSentHeartbeatDate,
         heartbeats: [
           ...existingHeartbeatsObject.heartbeats,
           ...heartbeatsObject.heartbeats
@@ -3154,8 +3155,8 @@ function _isHttpOrHttps() {
   return _getCurrentScheme() === "http:" || _getCurrentScheme() === "https:";
 }
 function _getCurrentScheme() {
-  var _a;
-  return typeof self !== "undefined" && ((_a = self.location) === null || _a === void 0 ? void 0 : _a.protocol) || null;
+  var _a2;
+  return typeof self !== "undefined" && ((_a2 = self.location) === null || _a2 === void 0 ? void 0 : _a2.protocol) || null;
 }
 /**
  * @license
@@ -3909,7 +3910,7 @@ class ProactiveRefresh {
     }
   }
   getInterval(wasError) {
-    var _a;
+    var _a2;
     if (wasError) {
       const interval = this.errorBackoff;
       this.errorBackoff = Math.min(
@@ -3920,7 +3921,7 @@ class ProactiveRefresh {
       return interval;
     } else {
       this.errorBackoff = 3e4;
-      const expTime = (_a = this.user.stsTokenManager.expirationTime) !== null && _a !== void 0 ? _a : 0;
+      const expTime = (_a2 = this.user.stsTokenManager.expirationTime) !== null && _a2 !== void 0 ? _a2 : 0;
       const interval = expTime - Date.now() - 3e5;
       return Math.max(0, interval);
     }
@@ -4004,7 +4005,7 @@ class UserMetadata {
  * limitations under the License.
  */
 async function _reloadWithoutSaving(user) {
-  var _a;
+  var _a2;
   const auth2 = user.auth;
   const idToken = await user.getIdToken();
   const response = await _logoutIfInvalidated(user, getAccountInfo(auth2, { idToken }));
@@ -4016,7 +4017,7 @@ async function _reloadWithoutSaving(user) {
   );
   const coreAccount = response.users[0];
   user._notifyReloadListener(coreAccount);
-  const newProviderData = ((_a = coreAccount.providerUserInfo) === null || _a === void 0 ? void 0 : _a.length) ? extractProviderData(coreAccount.providerUserInfo) : [];
+  const newProviderData = ((_a2 = coreAccount.providerUserInfo) === null || _a2 === void 0 ? void 0 : _a2.length) ? extractProviderData(coreAccount.providerUserInfo) : [];
   const providerData = mergeProviderData(user.providerData, newProviderData);
   const oldIsAnonymous = user.isAnonymous;
   const newIsAnonymous = !(user.email && coreAccount.passwordHash) && !(providerData === null || providerData === void 0 ? void 0 : providerData.length);
@@ -4046,8 +4047,8 @@ function mergeProviderData(original, newData) {
   return [...deduped, ...newData];
 }
 function extractProviderData(providers) {
-  return providers.map((_a) => {
-    var { providerId } = _a, provider = __rest(_a, ["providerId"]);
+  return providers.map((_a2) => {
+    var { providerId } = _a2, provider = __rest(_a2, ["providerId"]);
     return {
       providerId,
       uid: provider.rawId || "",
@@ -4249,8 +4250,8 @@ function assertStringOrUndefined(assertion, appName) {
   _assert(typeof assertion === "string" || typeof assertion === "undefined", "internal-error", { appName });
 }
 class UserImpl {
-  constructor(_a) {
-    var { uid, auth: auth2, stsTokenManager } = _a, opt = __rest(_a, ["uid", "auth", "stsTokenManager"]);
+  constructor(_a2) {
+    var { uid, auth: auth2, stsTokenManager } = _a2, opt = __rest(_a2, ["uid", "auth", "stsTokenManager"]);
     this.providerId = "firebase";
     this.proactiveRefresh = new ProactiveRefresh(this);
     this.reloadUserInfo = null;
@@ -4390,15 +4391,15 @@ class UserImpl {
     return this.stsTokenManager.refreshToken || "";
   }
   static _fromJSON(auth2, object2) {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    const displayName = (_a = object2.displayName) !== null && _a !== void 0 ? _a : void 0;
-    const email = (_b = object2.email) !== null && _b !== void 0 ? _b : void 0;
-    const phoneNumber = (_c = object2.phoneNumber) !== null && _c !== void 0 ? _c : void 0;
-    const photoURL = (_d = object2.photoURL) !== null && _d !== void 0 ? _d : void 0;
-    const tenantId = (_e = object2.tenantId) !== null && _e !== void 0 ? _e : void 0;
-    const _redirectEventId = (_f = object2._redirectEventId) !== null && _f !== void 0 ? _f : void 0;
-    const createdAt = (_g = object2.createdAt) !== null && _g !== void 0 ? _g : void 0;
-    const lastLoginAt = (_h = object2.lastLoginAt) !== null && _h !== void 0 ? _h : void 0;
+    var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2;
+    const displayName = (_a2 = object2.displayName) !== null && _a2 !== void 0 ? _a2 : void 0;
+    const email = (_b2 = object2.email) !== null && _b2 !== void 0 ? _b2 : void 0;
+    const phoneNumber = (_c2 = object2.phoneNumber) !== null && _c2 !== void 0 ? _c2 : void 0;
+    const photoURL = (_d2 = object2.photoURL) !== null && _d2 !== void 0 ? _d2 : void 0;
+    const tenantId = (_e2 = object2.tenantId) !== null && _e2 !== void 0 ? _e2 : void 0;
+    const _redirectEventId = (_f2 = object2._redirectEventId) !== null && _f2 !== void 0 ? _f2 : void 0;
+    const createdAt = (_g2 = object2.createdAt) !== null && _g2 !== void 0 ? _g2 : void 0;
+    const lastLoginAt = (_h2 = object2.lastLoginAt) !== null && _h2 !== void 0 ? _h2 : void 0;
     const { uid, emailVerified, isAnonymous, providerData, stsTokenManager: plainObjectTokenManager } = object2;
     _assert(
       uid && plainObjectTokenManager,
@@ -4683,7 +4684,7 @@ class PersistenceUserManager {
           selectedPersistence = persistence;
           break;
         }
-      } catch (_a) {
+      } catch (_a2) {
       }
     }
     const migrationHierarchy = availablePersistences.filter((p) => p._shouldAllowMigration);
@@ -4698,7 +4699,7 @@ class PersistenceUserManager {
       if (persistence !== selectedPersistence) {
         try {
           await persistence._remove(key);
-        } catch (_a) {
+        } catch (_a2) {
         }
       }
     }));
@@ -4908,10 +4909,10 @@ async function _getPasswordPolicy(auth2, request = {}) {
 const MINIMUM_MIN_PASSWORD_LENGTH = 6;
 class PasswordPolicyImpl {
   constructor(response) {
-    var _a, _b, _c, _d;
+    var _a2, _b2, _c2, _d2;
     const responseOptions = response.customStrengthOptions;
     this.customStrengthOptions = {};
-    this.customStrengthOptions.minPasswordLength = (_a = responseOptions.minPasswordLength) !== null && _a !== void 0 ? _a : MINIMUM_MIN_PASSWORD_LENGTH;
+    this.customStrengthOptions.minPasswordLength = (_a2 = responseOptions.minPasswordLength) !== null && _a2 !== void 0 ? _a2 : MINIMUM_MIN_PASSWORD_LENGTH;
     if (responseOptions.maxPasswordLength) {
       this.customStrengthOptions.maxPasswordLength = responseOptions.maxPasswordLength;
     }
@@ -4931,24 +4932,24 @@ class PasswordPolicyImpl {
     if (this.enforcementState === "ENFORCEMENT_STATE_UNSPECIFIED") {
       this.enforcementState = "OFF";
     }
-    this.allowedNonAlphanumericCharacters = (_c = (_b = response.allowedNonAlphanumericCharacters) === null || _b === void 0 ? void 0 : _b.join("")) !== null && _c !== void 0 ? _c : "";
-    this.forceUpgradeOnSignin = (_d = response.forceUpgradeOnSignin) !== null && _d !== void 0 ? _d : false;
+    this.allowedNonAlphanumericCharacters = (_c2 = (_b2 = response.allowedNonAlphanumericCharacters) === null || _b2 === void 0 ? void 0 : _b2.join("")) !== null && _c2 !== void 0 ? _c2 : "";
+    this.forceUpgradeOnSignin = (_d2 = response.forceUpgradeOnSignin) !== null && _d2 !== void 0 ? _d2 : false;
     this.schemaVersion = response.schemaVersion;
   }
   validatePassword(password) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a2, _b2, _c2, _d2, _e2, _f2;
     const status = {
       isValid: true,
       passwordPolicy: this
     };
     this.validatePasswordLengthOptions(password, status);
     this.validatePasswordCharacterOptions(password, status);
-    status.isValid && (status.isValid = (_a = status.meetsMinPasswordLength) !== null && _a !== void 0 ? _a : true);
-    status.isValid && (status.isValid = (_b = status.meetsMaxPasswordLength) !== null && _b !== void 0 ? _b : true);
-    status.isValid && (status.isValid = (_c = status.containsLowercaseLetter) !== null && _c !== void 0 ? _c : true);
-    status.isValid && (status.isValid = (_d = status.containsUppercaseLetter) !== null && _d !== void 0 ? _d : true);
-    status.isValid && (status.isValid = (_e = status.containsNumericCharacter) !== null && _e !== void 0 ? _e : true);
-    status.isValid && (status.isValid = (_f = status.containsNonAlphanumericCharacter) !== null && _f !== void 0 ? _f : true);
+    status.isValid && (status.isValid = (_a2 = status.meetsMinPasswordLength) !== null && _a2 !== void 0 ? _a2 : true);
+    status.isValid && (status.isValid = (_b2 = status.meetsMaxPasswordLength) !== null && _b2 !== void 0 ? _b2 : true);
+    status.isValid && (status.isValid = (_c2 = status.containsLowercaseLetter) !== null && _c2 !== void 0 ? _c2 : true);
+    status.isValid && (status.isValid = (_d2 = status.containsUppercaseLetter) !== null && _d2 !== void 0 ? _d2 : true);
+    status.isValid && (status.isValid = (_e2 = status.containsNumericCharacter) !== null && _e2 !== void 0 ? _e2 : true);
+    status.isValid && (status.isValid = (_f2 = status.containsNonAlphanumericCharacter) !== null && _f2 !== void 0 ? _f2 : true);
     return status;
   }
   /**
@@ -5083,23 +5084,23 @@ class AuthImpl {
       this._popupRedirectResolver = _getInstance(popupRedirectResolver);
     }
     this._initializationPromise = this.queue(async () => {
-      var _a, _b, _c;
+      var _a2, _b2, _c2;
       if (this._deleted) {
         return;
       }
       this.persistenceManager = await PersistenceUserManager.create(this, persistenceHierarchy);
-      (_a = this._resolvePersistenceManagerAvailable) === null || _a === void 0 ? void 0 : _a.call(this);
+      (_a2 = this._resolvePersistenceManagerAvailable) === null || _a2 === void 0 ? void 0 : _a2.call(this);
       if (this._deleted) {
         return;
       }
-      if ((_b = this._popupRedirectResolver) === null || _b === void 0 ? void 0 : _b._shouldInitProactively) {
+      if ((_b2 = this._popupRedirectResolver) === null || _b2 === void 0 ? void 0 : _b2._shouldInitProactively) {
         try {
           await this._popupRedirectResolver._initialize(this);
         } catch (e) {
         }
       }
       await this.initializeCurrentUser(popupRedirectResolver);
-      this.lastNotifiedUid = ((_c = this.currentUser) === null || _c === void 0 ? void 0 : _c.uid) || null;
+      this.lastNotifiedUid = ((_c2 = this.currentUser) === null || _c2 === void 0 ? void 0 : _c2.uid) || null;
       if (this._deleted) {
         return;
       }
@@ -5140,7 +5141,7 @@ class AuthImpl {
     }
   }
   async initializeCurrentUser(popupRedirectResolver) {
-    var _a;
+    var _a2;
     if (_isFirebaseServerApp(this.app)) {
       const idToken = this.app.settings.authIdToken;
       if (idToken) {
@@ -5156,7 +5157,7 @@ class AuthImpl {
     let needsTocheckMiddleware = false;
     if (popupRedirectResolver && this.config.authDomain) {
       await this.getOrInitRedirectPersistenceManager();
-      const redirectUserEventId = (_a = this.redirectUser) === null || _a === void 0 ? void 0 : _a._redirectEventId;
+      const redirectUserEventId = (_a2 = this.redirectUser) === null || _a2 === void 0 ? void 0 : _a2._redirectEventId;
       const storedUserEventId = futureCurrentUser === null || futureCurrentUser === void 0 ? void 0 : futureCurrentUser._redirectEventId;
       const result = await this.tryRedirectSignIn(popupRedirectResolver);
       if ((!redirectUserEventId || redirectUserEventId === storedUserEventId) && (result === null || result === void 0 ? void 0 : result.user)) {
@@ -5358,12 +5359,12 @@ class AuthImpl {
     }
   }
   toJSON() {
-    var _a;
+    var _a2;
     return {
       apiKey: this.config.apiKey,
       authDomain: this.config.authDomain,
       appName: this.name,
-      currentUser: (_a = this._currentUser) === null || _a === void 0 ? void 0 : _a.toJSON()
+      currentUser: (_a2 = this._currentUser) === null || _a2 === void 0 ? void 0 : _a2.toJSON()
     };
   }
   async _setRedirectUser(user, popupRedirectResolver) {
@@ -5390,15 +5391,15 @@ class AuthImpl {
     return this.redirectPersistenceManager;
   }
   async _redirectUserForId(id) {
-    var _a, _b;
+    var _a2, _b2;
     if (this._isInitialized) {
       await this.queue(async () => {
       });
     }
-    if (((_a = this._currentUser) === null || _a === void 0 ? void 0 : _a._redirectEventId) === id) {
+    if (((_a2 = this._currentUser) === null || _a2 === void 0 ? void 0 : _a2._redirectEventId) === id) {
       return this._currentUser;
     }
-    if (((_b = this.redirectUser) === null || _b === void 0 ? void 0 : _b._redirectEventId) === id) {
+    if (((_b2 = this.redirectUser) === null || _b2 === void 0 ? void 0 : _b2._redirectEventId) === id) {
       return this.redirectUser;
     }
     return null;
@@ -5434,12 +5435,12 @@ class AuthImpl {
     return this.currentUser;
   }
   notifyAuthListeners() {
-    var _a, _b;
+    var _a2, _b2;
     if (!this._isInitialized) {
       return;
     }
     this.idTokenSubscription.next(this.currentUser);
-    const currentUid = (_b = (_a = this.currentUser) === null || _a === void 0 ? void 0 : _a.uid) !== null && _b !== void 0 ? _b : null;
+    const currentUid = (_b2 = (_a2 = this.currentUser) === null || _a2 === void 0 ? void 0 : _a2.uid) !== null && _b2 !== void 0 ? _b2 : null;
     if (this.lastNotifiedUid !== currentUid) {
       this.lastNotifiedUid = currentUid;
       this.authStateSubscription.next(this.currentUser);
@@ -5523,7 +5524,7 @@ class AuthImpl {
     return this.frameworks;
   }
   async _getAdditionalHeaders() {
-    var _a;
+    var _a2;
     const headers = {
       [
         "X-Client-Version"
@@ -5536,9 +5537,9 @@ class AuthImpl {
         /* HttpHeader.X_FIREBASE_GMPID */
       ] = this.app.options.appId;
     }
-    const heartbeatsHeader = await ((_a = this.heartbeatServiceProvider.getImmediate({
+    const heartbeatsHeader = await ((_a2 = this.heartbeatServiceProvider.getImmediate({
       optional: true
-    })) === null || _a === void 0 ? void 0 : _a.getHeartbeatsHeader());
+    })) === null || _a2 === void 0 ? void 0 : _a2.getHeartbeatsHeader());
     if (heartbeatsHeader) {
       headers[
         "X-Firebase-Client"
@@ -5555,11 +5556,11 @@ class AuthImpl {
     return headers;
   }
   async _getAppCheckToken() {
-    var _a;
+    var _a2;
     if (_isFirebaseServerApp(this.app) && this.app.settings.appCheckToken) {
       return this.app.settings.appCheckToken;
     }
-    const appCheckTokenResult = await ((_a = this.appCheckServiceProvider.getImmediate({ optional: true })) === null || _a === void 0 ? void 0 : _a.getToken());
+    const appCheckTokenResult = await ((_a2 = this.appCheckServiceProvider.getImmediate({ optional: true })) === null || _a2 === void 0 ? void 0 : _a2.getToken());
     if (appCheckTokenResult === null || appCheckTokenResult === void 0 ? void 0 : appCheckTokenResult.error) {
       _logWarn(`Error while retrieving App Check token: ${appCheckTokenResult.error}`);
     }
@@ -5606,7 +5607,7 @@ function initializeAuth(app2, deps) {
   if (provider.isInitialized()) {
     const auth3 = provider.getImmediate();
     const initialOptions = provider.getOptions();
-    if (deepEqual(initialOptions, {})) {
+    if (deepEqual(initialOptions, deps !== null && deps !== void 0 ? deps : {})) {
       return auth3;
     } else {
       _fail$1(
@@ -6083,7 +6084,7 @@ class FacebookAuthProvider extends BaseOAuthProvider {
     }
     try {
       return FacebookAuthProvider.credential(tokenResponse.oauthAccessToken);
-    } catch (_a) {
+    } catch (_a2) {
       return null;
     }
   }
@@ -6162,7 +6163,7 @@ class GoogleAuthProvider extends BaseOAuthProvider {
     }
     try {
       return GoogleAuthProvider.credential(oauthIdToken, oauthAccessToken);
-    } catch (_a) {
+    } catch (_a2) {
       return null;
     }
   }
@@ -6230,7 +6231,7 @@ class GithubAuthProvider extends BaseOAuthProvider {
     }
     try {
       return GithubAuthProvider.credential(tokenResponse.oauthAccessToken);
-    } catch (_a) {
+    } catch (_a2) {
       return null;
     }
   }
@@ -6301,7 +6302,7 @@ class TwitterAuthProvider extends BaseOAuthProvider {
     }
     try {
       return TwitterAuthProvider.credential(oauthAccessToken, oauthTokenSecret);
-    } catch (_a) {
+    } catch (_a2) {
       return null;
     }
   }
@@ -6384,14 +6385,14 @@ function providerIdForResponse(response) {
  */
 class MultiFactorError extends FirebaseError {
   constructor(auth2, error2, operationType, user) {
-    var _a;
+    var _a2;
     super(error2.code, error2.message);
     this.operationType = operationType;
     this.user = user;
     Object.setPrototypeOf(this, MultiFactorError.prototype);
     this.customData = {
       appName: auth2.name,
-      tenantId: (_a = auth2.tenantId) !== null && _a !== void 0 ? _a : void 0,
+      tenantId: (_a2 = auth2.tenantId) !== null && _a2 !== void 0 ? _a2 : void 0,
       _serverResponse: error2.customData._serverResponse,
       operationType
     };
@@ -6467,9 +6468,9 @@ class AuthInterop {
     this.internalListeners = /* @__PURE__ */ new Map();
   }
   getUid() {
-    var _a;
+    var _a2;
     this.assertAuthConfigured();
-    return ((_a = this.auth.currentUser) === null || _a === void 0 ? void 0 : _a.uid) || null;
+    return ((_a2 = this.auth.currentUser) === null || _a2 === void 0 ? void 0 : _a2.uid) || null;
   }
   async getToken(forceRefresh) {
     this.assertAuthConfigured();
@@ -7111,7 +7112,7 @@ function requireLogging() {
   if (hasRequiredLogging) return logging;
   hasRequiredLogging = 1;
   (function(exports) {
-    var _a, _b, _c, _d;
+    var _a2, _b2, _c2, _d2;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.log = exports.setLoggerVerbosity = exports.setLogger = exports.getLogger = void 0;
     exports.trace = trace;
@@ -7132,7 +7133,7 @@ function requireLogging() {
     };
     let _logger = DEFAULT_LOGGER;
     let _logVerbosity = constants_1.LogVerbosity.ERROR;
-    const verbosityString = (_b = (_a = process.env.GRPC_NODE_VERBOSITY) !== null && _a !== void 0 ? _a : process.env.GRPC_VERBOSITY) !== null && _b !== void 0 ? _b : "";
+    const verbosityString = (_b2 = (_a2 = process.env.GRPC_NODE_VERBOSITY) !== null && _a2 !== void 0 ? _a2 : process.env.GRPC_VERBOSITY) !== null && _b2 !== void 0 ? _b2 : "";
     switch (verbosityString.toUpperCase()) {
       case "DEBUG":
         _logVerbosity = constants_1.LogVerbosity.DEBUG;
@@ -7182,7 +7183,7 @@ function requireLogging() {
       }
     };
     exports.log = log;
-    const tracersString = (_d = (_c = process.env.GRPC_NODE_TRACE) !== null && _c !== void 0 ? _c : process.env.GRPC_TRACE) !== null && _d !== void 0 ? _d : "";
+    const tracersString = (_d2 = (_c2 = process.env.GRPC_NODE_TRACE) !== null && _c2 !== void 0 ? _c2 : process.env.GRPC_TRACE) !== null && _d2 !== void 0 ? _d2 : "";
     const enabledTracers = /* @__PURE__ */ new Set();
     const disabledTracers = /* @__PURE__ */ new Set();
     for (const tracerName of tracersString.split(",")) {
@@ -7639,7 +7640,7 @@ function requireChannelCredentials() {
      * @param verifyOptions Additional options to modify certificate verification
      */
     static createSsl(rootCerts, privateKey, certChain, verifyOptions) {
-      var _a;
+      var _a2;
       verifyIsBufferOrNull(rootCerts, "Root certificate");
       verifyIsBufferOrNull(privateKey, "Private key");
       verifyIsBufferOrNull(certChain, "Certificate chain");
@@ -7650,7 +7651,7 @@ function requireChannelCredentials() {
         throw new Error("Certificate chain must be given with accompanying private key");
       }
       const secureContext = (0, tls_1.createSecureContext)({
-        ca: (_a = rootCerts !== null && rootCerts !== void 0 ? rootCerts : (0, tls_helpers_1.getDefaultRootsData)()) !== null && _a !== void 0 ? _a : void 0,
+        ca: (_a2 = rootCerts !== null && rootCerts !== void 0 ? rootCerts : (0, tls_helpers_1.getDefaultRootsData)()) !== null && _a2 !== void 0 ? _a2 : void 0,
         key: privateKey !== null && privateKey !== void 0 ? privateKey : void 0,
         cert: certChain !== null && certChain !== void 0 ? certChain : void 0,
         ciphers: tls_helpers_1.CIPHER_SUITES
@@ -7772,13 +7773,13 @@ function requireLoadBalancer() {
   loadBalancer.getFirstUsableConfig = getFirstUsableConfig;
   loadBalancer.validateLoadBalancingConfig = validateLoadBalancingConfig;
   function createChildChannelControlHelper(parent, overrides) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _j2, _k2;
     return {
-      createSubchannel: (_b = (_a = overrides.createSubchannel) === null || _a === void 0 ? void 0 : _a.bind(overrides)) !== null && _b !== void 0 ? _b : parent.createSubchannel.bind(parent),
-      updateState: (_d = (_c = overrides.updateState) === null || _c === void 0 ? void 0 : _c.bind(overrides)) !== null && _d !== void 0 ? _d : parent.updateState.bind(parent),
-      requestReresolution: (_f = (_e = overrides.requestReresolution) === null || _e === void 0 ? void 0 : _e.bind(overrides)) !== null && _f !== void 0 ? _f : parent.requestReresolution.bind(parent),
-      addChannelzChild: (_h = (_g = overrides.addChannelzChild) === null || _g === void 0 ? void 0 : _g.bind(overrides)) !== null && _h !== void 0 ? _h : parent.addChannelzChild.bind(parent),
-      removeChannelzChild: (_k = (_j = overrides.removeChannelzChild) === null || _j === void 0 ? void 0 : _j.bind(overrides)) !== null && _k !== void 0 ? _k : parent.removeChannelzChild.bind(parent)
+      createSubchannel: (_b2 = (_a2 = overrides.createSubchannel) === null || _a2 === void 0 ? void 0 : _a2.bind(overrides)) !== null && _b2 !== void 0 ? _b2 : parent.createSubchannel.bind(parent),
+      updateState: (_d2 = (_c2 = overrides.updateState) === null || _c2 === void 0 ? void 0 : _c2.bind(overrides)) !== null && _d2 !== void 0 ? _d2 : parent.updateState.bind(parent),
+      requestReresolution: (_f2 = (_e2 = overrides.requestReresolution) === null || _e2 === void 0 ? void 0 : _e2.bind(overrides)) !== null && _f2 !== void 0 ? _f2 : parent.requestReresolution.bind(parent),
+      addChannelzChild: (_h2 = (_g2 = overrides.addChannelzChild) === null || _g2 === void 0 ? void 0 : _g2.bind(overrides)) !== null && _h2 !== void 0 ? _h2 : parent.addChannelzChild.bind(parent),
+      removeChannelzChild: (_k2 = (_j2 = overrides.removeChannelzChild) === null || _j2 === void 0 ? void 0 : _j2.bind(overrides)) !== null && _k2 !== void 0 ? _k2 : parent.removeChannelzChild.bind(parent)
     };
   }
   const registeredLoadBalancerTypes = {};
@@ -7949,7 +7950,7 @@ function requireServiceConfig() {
     return result;
   }
   function validateMethodConfig(obj) {
-    var _a;
+    var _a2;
     const result = {
       name: []
     };
@@ -7978,7 +7979,7 @@ function requireServiceConfig() {
         const timeoutParts = obj.timeout.substring(0, obj.timeout.length - 1).split(".");
         result.timeout = {
           seconds: timeoutParts[0] | 0,
-          nanos: ((_a = timeoutParts[1]) !== null && _a !== void 0 ? _a : 0) | 0
+          nanos: ((_a2 = timeoutParts[1]) !== null && _a2 !== void 0 ? _a2 : 0) | 0
         };
       } else {
         throw new Error("Invalid method config: invalid timeout");
@@ -8415,7 +8416,7 @@ function requireBackoffTimeout() {
       clearTimeout(this.timerId);
     }
     runTimer(delay) {
-      var _a, _b;
+      var _a2, _b2;
       this.endTime = this.startTime;
       this.endTime.setMilliseconds(this.endTime.getMilliseconds() + this.nextDelay);
       clearTimeout(this.timerId);
@@ -8424,7 +8425,7 @@ function requireBackoffTimeout() {
         this.running = false;
       }, delay);
       if (!this.hasRef) {
-        (_b = (_a = this.timerId).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+        (_b2 = (_a2 = this.timerId).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
       }
     }
     /**
@@ -8475,18 +8476,18 @@ function requireBackoffTimeout() {
      * running.
      */
     ref() {
-      var _a, _b;
+      var _a2, _b2;
       this.hasRef = true;
-      (_b = (_a = this.timerId).ref) === null || _b === void 0 ? void 0 : _b.call(_a);
+      (_b2 = (_a2 = this.timerId).ref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
     }
     /**
      * Set that while the timer is running, it should not keep the Node process
      * running.
      */
     unref() {
-      var _a, _b;
+      var _a2, _b2;
       this.hasRef = false;
-      (_b = (_a = this.timerId).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+      (_b2 = (_a2 = this.timerId).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
     }
     /**
      * Get the approximate timestamp of when the timer will fire. Only valid if
@@ -8524,12 +8525,12 @@ function requireLoadBalancerChildHandler() {
           return this.parent.channelControlHelper.createSubchannel(subchannelAddress2, subchannelArgs);
         }
         updateState(connectivityState2, picker2) {
-          var _a;
+          var _a2;
           if (this.calledByPendingChild()) {
             if (connectivityState2 === connectivity_state_1.ConnectivityState.CONNECTING) {
               return;
             }
-            (_a = this.parent.currentChild) === null || _a === void 0 ? void 0 : _a.destroy();
+            (_a2 = this.parent.currentChild) === null || _a2 === void 0 ? void 0 : _a2.destroy();
             this.parent.currentChild = this.parent.pendingChild;
             this.parent.pendingChild = null;
           } else if (!this.calledByCurrentChild()) {
@@ -8538,8 +8539,8 @@ function requireLoadBalancerChildHandler() {
           this.parent.channelControlHelper.updateState(connectivityState2, picker2);
         }
         requestReresolution() {
-          var _a;
-          const latestChild = (_a = this.parent.pendingChild) !== null && _a !== void 0 ? _a : this.parent.currentChild;
+          var _a2;
+          const latestChild = (_a2 = this.parent.pendingChild) !== null && _a2 !== void 0 ? _a2 : this.parent.currentChild;
           if (this.child === latestChild) {
             this.parent.channelControlHelper.requestReresolution();
           }
@@ -8687,10 +8688,10 @@ function requireResolvingLoadBalancer() {
   }
   function getDefaultConfigSelector(serviceConfig2) {
     return function defaultConfigSelector(methodName, metadata2) {
-      var _a, _b;
+      var _a2, _b2;
       const splitName = methodName.split("/").filter((x) => x.length > 0);
-      const service2 = (_a = splitName[0]) !== null && _a !== void 0 ? _a : "";
-      const method2 = (_b = splitName[1]) !== null && _b !== void 0 ? _b : "";
+      const service2 = (_a2 = splitName[0]) !== null && _a2 !== void 0 ? _a2 : "";
+      const method2 = (_b2 = splitName[1]) !== null && _b2 !== void 0 ? _b2 : "";
       if (serviceConfig2 && serviceConfig2.methodConfig) {
         for (const matchLevel of NAME_MATCH_LEVEL_ORDER) {
           const matchingConfig = findMatchingConfig(service2, method2, serviceConfig2.methodConfig, matchLevel);
@@ -8764,7 +8765,7 @@ function requireResolvingLoadBalancer() {
       });
       this.innerResolver = (0, resolver_1.createResolver)(target, {
         onSuccessfulResolution: (addressList, serviceConfig2, serviceConfigError, configSelector, attributes) => {
-          var _a;
+          var _a2;
           this.backoffTimeout.stop();
           this.backoffTimeout.reset();
           let workingServiceConfig = null;
@@ -8783,7 +8784,7 @@ function requireResolvingLoadBalancer() {
             workingServiceConfig = serviceConfig2;
             this.previousServiceConfig = serviceConfig2;
           }
-          const workingConfigList = (_a = workingServiceConfig === null || workingServiceConfig === void 0 ? void 0 : workingServiceConfig.loadBalancingConfig) !== null && _a !== void 0 ? _a : [];
+          const workingConfigList = (_a2 = workingServiceConfig === null || workingServiceConfig === void 0 ? void 0 : workingServiceConfig.loadBalancingConfig) !== null && _a2 !== void 0 ? _a2 : [];
           const loadBalancingConfig = (0, load_balancer_1.getFirstUsableConfig)(workingConfigList, true);
           if (loadBalancingConfig === null) {
             this.handleResolutionFailure({
@@ -9022,12 +9023,12 @@ ${callerStack}`;
       super();
     }
     cancel() {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
     }
     getPeer() {
-      var _a, _b;
-      return (_b = (_a = this.call) === null || _a === void 0 ? void 0 : _a.getPeer()) !== null && _b !== void 0 ? _b : "unknown";
+      var _a2, _b2;
+      return (_b2 = (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.getPeer()) !== null && _b2 !== void 0 ? _b2 : "unknown";
     }
   }
   call.ClientUnaryCallImpl = ClientUnaryCallImpl;
@@ -9037,16 +9038,16 @@ ${callerStack}`;
       this.deserialize = deserialize;
     }
     cancel() {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
     }
     getPeer() {
-      var _a, _b;
-      return (_b = (_a = this.call) === null || _a === void 0 ? void 0 : _a.getPeer()) !== null && _b !== void 0 ? _b : "unknown";
+      var _a2, _b2;
+      return (_b2 = (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.getPeer()) !== null && _b2 !== void 0 ? _b2 : "unknown";
     }
     _read(_size) {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.startRead();
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.startRead();
     }
   }
   call.ClientReadableStreamImpl = ClientReadableStreamImpl;
@@ -9056,15 +9057,15 @@ ${callerStack}`;
       this.serialize = serialize;
     }
     cancel() {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
     }
     getPeer() {
-      var _a, _b;
-      return (_b = (_a = this.call) === null || _a === void 0 ? void 0 : _a.getPeer()) !== null && _b !== void 0 ? _b : "unknown";
+      var _a2, _b2;
+      return (_b2 = (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.getPeer()) !== null && _b2 !== void 0 ? _b2 : "unknown";
     }
     _write(chunk, encoding, cb) {
-      var _a;
+      var _a2;
       const context = {
         callback: cb
       };
@@ -9072,11 +9073,11 @@ ${callerStack}`;
       if (!Number.isNaN(flags)) {
         context.flags = flags;
       }
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.sendMessageWithContext(context, chunk);
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.sendMessageWithContext(context, chunk);
     }
     _final(cb) {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.halfClose();
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.halfClose();
       cb();
     }
   }
@@ -9088,19 +9089,19 @@ ${callerStack}`;
       this.deserialize = deserialize;
     }
     cancel() {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.cancelWithStatus(constants_1.Status.CANCELLED, "Cancelled on client");
     }
     getPeer() {
-      var _a, _b;
-      return (_b = (_a = this.call) === null || _a === void 0 ? void 0 : _a.getPeer()) !== null && _b !== void 0 ? _b : "unknown";
+      var _a2, _b2;
+      return (_b2 = (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.getPeer()) !== null && _b2 !== void 0 ? _b2 : "unknown";
     }
     _read(_size) {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.startRead();
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.startRead();
     }
     _write(chunk, encoding, cb) {
-      var _a;
+      var _a2;
       const context = {
         callback: cb
       };
@@ -9108,11 +9109,11 @@ ${callerStack}`;
       if (!Number.isNaN(flags)) {
         context.flags = flags;
       }
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.sendMessageWithContext(context, chunk);
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.sendMessageWithContext(context, chunk);
     }
     _final(cb) {
-      var _a;
-      (_a = this.call) === null || _a === void 0 ? void 0 : _a.halfClose();
+      var _a2;
+      (_a2 = this.call) === null || _a2 === void 0 ? void 0 : _a2.halfClose();
       cb();
     }
   }
@@ -9294,7 +9295,7 @@ function requireClientInterceptors() {
   };
   class InterceptingCall {
     constructor(nextCall, requester) {
-      var _a, _b, _c, _d;
+      var _a2, _b2, _c2, _d2;
       this.nextCall = nextCall;
       this.processingMetadata = false;
       this.pendingMessageContext = null;
@@ -9302,10 +9303,10 @@ function requireClientInterceptors() {
       this.pendingHalfClose = false;
       if (requester) {
         this.requester = {
-          start: (_a = requester.start) !== null && _a !== void 0 ? _a : defaultRequester.start,
-          sendMessage: (_b = requester.sendMessage) !== null && _b !== void 0 ? _b : defaultRequester.sendMessage,
-          halfClose: (_c = requester.halfClose) !== null && _c !== void 0 ? _c : defaultRequester.halfClose,
-          cancel: (_d = requester.cancel) !== null && _d !== void 0 ? _d : defaultRequester.cancel
+          start: (_a2 = requester.start) !== null && _a2 !== void 0 ? _a2 : defaultRequester.start,
+          sendMessage: (_b2 = requester.sendMessage) !== null && _b2 !== void 0 ? _b2 : defaultRequester.sendMessage,
+          halfClose: (_c2 = requester.halfClose) !== null && _c2 !== void 0 ? _c2 : defaultRequester.halfClose,
+          cancel: (_d2 = requester.cancel) !== null && _d2 !== void 0 ? _d2 : defaultRequester.cancel
         };
       } else {
         this.requester = defaultRequester;
@@ -9332,27 +9333,27 @@ function requireClientInterceptors() {
       }
     }
     start(metadata2, interceptingListener) {
-      var _a, _b, _c, _d, _e, _f;
+      var _a2, _b2, _c2, _d2, _e2, _f2;
       const fullInterceptingListener = {
-        onReceiveMetadata: (_b = (_a = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMetadata) === null || _a === void 0 ? void 0 : _a.bind(interceptingListener)) !== null && _b !== void 0 ? _b : ((metadata3) => {
+        onReceiveMetadata: (_b2 = (_a2 = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMetadata) === null || _a2 === void 0 ? void 0 : _a2.bind(interceptingListener)) !== null && _b2 !== void 0 ? _b2 : ((metadata3) => {
         }),
-        onReceiveMessage: (_d = (_c = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMessage) === null || _c === void 0 ? void 0 : _c.bind(interceptingListener)) !== null && _d !== void 0 ? _d : ((message2) => {
+        onReceiveMessage: (_d2 = (_c2 = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMessage) === null || _c2 === void 0 ? void 0 : _c2.bind(interceptingListener)) !== null && _d2 !== void 0 ? _d2 : ((message2) => {
         }),
-        onReceiveStatus: (_f = (_e = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveStatus) === null || _e === void 0 ? void 0 : _e.bind(interceptingListener)) !== null && _f !== void 0 ? _f : ((status) => {
+        onReceiveStatus: (_f2 = (_e2 = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveStatus) === null || _e2 === void 0 ? void 0 : _e2.bind(interceptingListener)) !== null && _f2 !== void 0 ? _f2 : ((status) => {
         })
       };
       this.processingMetadata = true;
       this.requester.start(metadata2, fullInterceptingListener, (md, listener) => {
-        var _a2, _b2, _c2;
+        var _a3, _b3, _c3;
         this.processingMetadata = false;
         let finalInterceptingListener;
         if ((0, call_interface_1.isInterceptingListener)(listener)) {
           finalInterceptingListener = listener;
         } else {
           const fullListener = {
-            onReceiveMetadata: (_a2 = listener.onReceiveMetadata) !== null && _a2 !== void 0 ? _a2 : defaultListener.onReceiveMetadata,
-            onReceiveMessage: (_b2 = listener.onReceiveMessage) !== null && _b2 !== void 0 ? _b2 : defaultListener.onReceiveMessage,
-            onReceiveStatus: (_c2 = listener.onReceiveStatus) !== null && _c2 !== void 0 ? _c2 : defaultListener.onReceiveStatus
+            onReceiveMetadata: (_a3 = listener.onReceiveMetadata) !== null && _a3 !== void 0 ? _a3 : defaultListener.onReceiveMetadata,
+            onReceiveMessage: (_b3 = listener.onReceiveMessage) !== null && _b3 !== void 0 ? _b3 : defaultListener.onReceiveMessage,
+            onReceiveStatus: (_c3 = listener.onReceiveStatus) !== null && _c3 !== void 0 ? _c3 : defaultListener.onReceiveStatus
           };
           finalInterceptingListener = new call_interface_1.InterceptingListenerImpl(fullListener, fullInterceptingListener);
         }
@@ -9394,10 +9395,10 @@ function requireClientInterceptors() {
   }
   clientInterceptors.InterceptingCall = InterceptingCall;
   function getCall(channel2, path2, options) {
-    var _a, _b;
-    const deadline2 = (_a = options.deadline) !== null && _a !== void 0 ? _a : Infinity;
+    var _a2, _b2;
+    const deadline2 = (_a2 = options.deadline) !== null && _a2 !== void 0 ? _a2 : Infinity;
     const host = options.host;
-    const parent = (_b = options.parent) !== null && _b !== void 0 ? _b : null;
+    const parent = (_b2 = options.parent) !== null && _b2 !== void 0 ? _b2 : null;
     const propagateFlags = options.propagate_flags;
     const credentials = options.credentials;
     const call2 = channel2.createCall(path2, deadline2, host, parent, propagateFlags);
@@ -9436,11 +9437,11 @@ function requireClientInterceptors() {
       let readError = null;
       this.call.start(metadata2, {
         onReceiveMetadata: (metadata3) => {
-          var _a;
-          (_a = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMetadata) === null || _a === void 0 ? void 0 : _a.call(interceptingListener, metadata3);
+          var _a2;
+          (_a2 = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMetadata) === null || _a2 === void 0 ? void 0 : _a2.call(interceptingListener, metadata3);
         },
         onReceiveMessage: (message2) => {
-          var _a;
+          var _a2;
           let deserialized;
           try {
             deserialized = this.methodDefinition.responseDeserialize(message2);
@@ -9453,14 +9454,14 @@ function requireClientInterceptors() {
             this.call.cancelWithStatus(readError.code, readError.details);
             return;
           }
-          (_a = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMessage) === null || _a === void 0 ? void 0 : _a.call(interceptingListener, deserialized);
+          (_a2 = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveMessage) === null || _a2 === void 0 ? void 0 : _a2.call(interceptingListener, deserialized);
         },
         onReceiveStatus: (status) => {
-          var _a, _b;
+          var _a2, _b2;
           if (readError) {
-            (_a = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveStatus) === null || _a === void 0 ? void 0 : _a.call(interceptingListener, readError);
+            (_a2 = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveStatus) === null || _a2 === void 0 ? void 0 : _a2.call(interceptingListener, readError);
           } else {
-            (_b = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveStatus) === null || _b === void 0 ? void 0 : _b.call(interceptingListener, status);
+            (_b2 = interceptingListener === null || interceptingListener === void 0 ? void 0 : interceptingListener.onReceiveStatus) === null || _b2 === void 0 ? void 0 : _b2.call(interceptingListener, status);
           }
         }
       });
@@ -9478,23 +9479,23 @@ function requireClientInterceptors() {
       super(call2, methodDefinition);
     }
     start(metadata2, listener) {
-      var _a, _b;
+      var _a2, _b2;
       let receivedMessage = false;
       const wrapperListener = {
-        onReceiveMetadata: (_b = (_a = listener === null || listener === void 0 ? void 0 : listener.onReceiveMetadata) === null || _a === void 0 ? void 0 : _a.bind(listener)) !== null && _b !== void 0 ? _b : ((metadata3) => {
+        onReceiveMetadata: (_b2 = (_a2 = listener === null || listener === void 0 ? void 0 : listener.onReceiveMetadata) === null || _a2 === void 0 ? void 0 : _a2.bind(listener)) !== null && _b2 !== void 0 ? _b2 : ((metadata3) => {
         }),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onReceiveMessage: (message2) => {
-          var _a2;
+          var _a3;
           receivedMessage = true;
-          (_a2 = listener === null || listener === void 0 ? void 0 : listener.onReceiveMessage) === null || _a2 === void 0 ? void 0 : _a2.call(listener, message2);
+          (_a3 = listener === null || listener === void 0 ? void 0 : listener.onReceiveMessage) === null || _a3 === void 0 ? void 0 : _a3.call(listener, message2);
         },
         onReceiveStatus: (status) => {
-          var _a2, _b2;
+          var _a3, _b3;
           if (!receivedMessage) {
-            (_a2 = listener === null || listener === void 0 ? void 0 : listener.onReceiveMessage) === null || _a2 === void 0 ? void 0 : _a2.call(listener, null);
+            (_a3 = listener === null || listener === void 0 ? void 0 : listener.onReceiveMessage) === null || _a3 === void 0 ? void 0 : _a3.call(listener, null);
           }
-          (_b2 = listener === null || listener === void 0 ? void 0 : listener.onReceiveStatus) === null || _b2 === void 0 ? void 0 : _b2.call(listener, status);
+          (_b3 = listener === null || listener === void 0 ? void 0 : listener.onReceiveStatus) === null || _b3 === void 0 ? void 0 : _b3.call(listener, status);
         }
       };
       super.start(metadata2, wrapperListener);
@@ -9558,11 +9559,11 @@ function requireClient() {
   }
   class Client {
     constructor(address, credentials, options = {}) {
-      var _a, _b;
+      var _a2, _b2;
       options = Object.assign({}, options);
-      this[INTERCEPTOR_SYMBOL] = (_a = options.interceptors) !== null && _a !== void 0 ? _a : [];
+      this[INTERCEPTOR_SYMBOL] = (_a2 = options.interceptors) !== null && _a2 !== void 0 ? _a2 : [];
       delete options.interceptors;
-      this[INTERCEPTOR_PROVIDER_SYMBOL] = (_b = options.interceptor_providers) !== null && _b !== void 0 ? _b : [];
+      this[INTERCEPTOR_PROVIDER_SYMBOL] = (_b2 = options.interceptor_providers) !== null && _b2 !== void 0 ? _b2 : [];
       delete options.interceptor_providers;
       if (this[INTERCEPTOR_SYMBOL].length > 0 && this[INTERCEPTOR_PROVIDER_SYMBOL].length > 0) {
         throw new Error("Both interceptors and interceptor_providers were passed as options to the client constructor. Only one of these is allowed.");
@@ -9627,7 +9628,7 @@ function requireClient() {
       }
     }
     makeUnaryRequest(method2, serialize, deserialize, argument, metadata2, options, callback) {
-      var _a, _b;
+      var _a2, _b2;
       const checkedArguments = this.checkOptionalUnaryResponseArguments(metadata2, options, callback);
       const methodDefinition = {
         path: method2,
@@ -9652,8 +9653,8 @@ function requireClient() {
       const interceptorArgs = {
         clientInterceptors: this[INTERCEPTOR_SYMBOL],
         clientInterceptorProviders: this[INTERCEPTOR_PROVIDER_SYMBOL],
-        callInterceptors: (_a = callProperties.callOptions.interceptors) !== null && _a !== void 0 ? _a : [],
-        callInterceptorProviders: (_b = callProperties.callOptions.interceptor_providers) !== null && _b !== void 0 ? _b : []
+        callInterceptors: (_a2 = callProperties.callOptions.interceptors) !== null && _a2 !== void 0 ? _a2 : [],
+        callInterceptorProviders: (_b2 = callProperties.callOptions.interceptor_providers) !== null && _b2 !== void 0 ? _b2 : []
       };
       const call2 = (0, client_interceptors_1.getInterceptingCall)(interceptorArgs, callProperties.methodDefinition, callProperties.callOptions, callProperties.channel);
       emitter.call = call2;
@@ -9700,7 +9701,7 @@ function requireClient() {
       return emitter;
     }
     makeClientStreamRequest(method2, serialize, deserialize, metadata2, options, callback) {
-      var _a, _b;
+      var _a2, _b2;
       const checkedArguments = this.checkOptionalUnaryResponseArguments(metadata2, options, callback);
       const methodDefinition = {
         path: method2,
@@ -9724,8 +9725,8 @@ function requireClient() {
       const interceptorArgs = {
         clientInterceptors: this[INTERCEPTOR_SYMBOL],
         clientInterceptorProviders: this[INTERCEPTOR_PROVIDER_SYMBOL],
-        callInterceptors: (_a = callProperties.callOptions.interceptors) !== null && _a !== void 0 ? _a : [],
-        callInterceptorProviders: (_b = callProperties.callOptions.interceptor_providers) !== null && _b !== void 0 ? _b : []
+        callInterceptors: (_a2 = callProperties.callOptions.interceptors) !== null && _a2 !== void 0 ? _a2 : [],
+        callInterceptorProviders: (_b2 = callProperties.callOptions.interceptor_providers) !== null && _b2 !== void 0 ? _b2 : []
       };
       const call2 = (0, client_interceptors_1.getInterceptingCall)(interceptorArgs, callProperties.methodDefinition, callProperties.callOptions, callProperties.channel);
       emitter.call = call2;
@@ -9790,7 +9791,7 @@ function requireClient() {
       return { metadata: metadata2, options };
     }
     makeServerStreamRequest(method2, serialize, deserialize, argument, metadata2, options) {
-      var _a, _b;
+      var _a2, _b2;
       const checkedArguments = this.checkMetadataAndOptions(metadata2, options);
       const methodDefinition = {
         path: method2,
@@ -9814,8 +9815,8 @@ function requireClient() {
       const interceptorArgs = {
         clientInterceptors: this[INTERCEPTOR_SYMBOL],
         clientInterceptorProviders: this[INTERCEPTOR_PROVIDER_SYMBOL],
-        callInterceptors: (_a = callProperties.callOptions.interceptors) !== null && _a !== void 0 ? _a : [],
-        callInterceptorProviders: (_b = callProperties.callOptions.interceptor_providers) !== null && _b !== void 0 ? _b : []
+        callInterceptors: (_a2 = callProperties.callOptions.interceptors) !== null && _a2 !== void 0 ? _a2 : [],
+        callInterceptorProviders: (_b2 = callProperties.callOptions.interceptor_providers) !== null && _b2 !== void 0 ? _b2 : []
       };
       const call2 = (0, client_interceptors_1.getInterceptingCall)(interceptorArgs, callProperties.methodDefinition, callProperties.callOptions, callProperties.channel);
       stream.call = call2;
@@ -9848,7 +9849,7 @@ function requireClient() {
       return stream;
     }
     makeBidiStreamRequest(method2, serialize, deserialize, metadata2, options) {
-      var _a, _b;
+      var _a2, _b2;
       const checkedArguments = this.checkMetadataAndOptions(metadata2, options);
       const methodDefinition = {
         path: method2,
@@ -9871,8 +9872,8 @@ function requireClient() {
       const interceptorArgs = {
         clientInterceptors: this[INTERCEPTOR_SYMBOL],
         clientInterceptorProviders: this[INTERCEPTOR_PROVIDER_SYMBOL],
-        callInterceptors: (_a = callProperties.callOptions.interceptors) !== null && _a !== void 0 ? _a : [],
-        callInterceptorProviders: (_b = callProperties.callOptions.interceptor_providers) !== null && _b !== void 0 ? _b : []
+        callInterceptors: (_a2 = callProperties.callOptions.interceptors) !== null && _a2 !== void 0 ? _a2 : [],
+        callInterceptorProviders: (_b2 = callProperties.callOptions.interceptor_providers) !== null && _b2 !== void 0 ? _b2 : []
       };
       const call2 = (0, client_interceptors_1.getInterceptingCall)(interceptorArgs, callProperties.methodDefinition, callProperties.callOptions, callProperties.channel);
       stream.call = call2;
@@ -12397,9 +12398,27 @@ function requireReader() {
   Reader.create = create();
   Reader.prototype._slice = util2.Array.prototype.subarray || /* istanbul ignore next */
   util2.Array.prototype.slice;
+  function readVarint32NearEnd(reader2) {
+    var value = 0;
+    for (var i = 0; i < 4; ++i) {
+      if (reader2.pos >= reader2.len)
+        throw indexOutOfRange(reader2);
+      var b = reader2.buf[reader2.pos++];
+      value = (value | (b & 127) << i * 7) >>> 0;
+      if (b < 128)
+        return value;
+    }
+    throw indexOutOfRange(reader2);
+  }
   Reader.prototype.uint32 = /* @__PURE__ */ (function read_uint32_setup() {
     var value = 4294967295;
     return function read_uint32() {
+      if (this.len - this.pos < 5) {
+        if (this.pos >= this.len)
+          throw indexOutOfRange(this);
+        if (this.buf[this.pos] >= 128)
+          return readVarint32NearEnd(this);
+      }
       value = (this.buf[this.pos] & 127) >>> 0;
       if (this.buf[this.pos++] < 128) return value;
       value = (value | (this.buf[this.pos] & 127) << 7) >>> 0;
@@ -13523,16 +13542,16 @@ function requireDecoder() {
     return "missing required '" + field2.name + "'";
   }
   function decoder(mtype) {
-    var gen = util2.codegen(["r", "l", "e", "n"], mtype.name + "$decode")("if(!(r instanceof Reader))")("r=Reader.create(r)")("if(n===undefined)n=0")("if(n>Reader.recursionLimit)")('throw Error("maximum nesting depth exceeded")')("var c=l===undefined?r.len:r.pos+l,m=new this.ctor" + (mtype.fieldsArray.filter(function(field3) {
+    var gen = util2.codegen(["r", "l", "e", "n"], mtype.name + "$decode")("if(!(r instanceof Reader))")("r=Reader.create(r)")("if(n===undefined)n=0")("if(n>Reader.recursionLimit)")('throw Error("maximum nesting depth exceeded")')("var c,m" + (mtype.fieldsArray.filter(function(field3) {
       return field3.map;
-    }).length ? ",k,value" : ""))("while(r.pos<c){")("var t=r.uint32()")("if(t===e)")("break")("switch(t>>>3){");
+    }).length ? ",k,value" : ""))("if(l===undefined)")("c=r.len")("else{")("c=r.pos+l")("if(c>r.len)")('throw RangeError("index out of range")')("l=r.len")("r.len=c")("}")("m=new this.ctor")("while(r.pos<c){")("var t=r.uint32()")("if(t===e)")("break")("switch(t>>>3){");
     var i = 0;
     for (; i < /* initializes */
     mtype.fieldsArray.length; ++i) {
       var field2 = mtype._fieldsArray[i].resolve(), type2 = field2.resolvedType instanceof Enum ? "int32" : field2.type, ref = "m" + util2.safeProp(field2.name);
       gen("case %i: {", field2.id);
       if (field2.map) {
-        gen("if(%s===util.emptyObject)", ref)("%s={}", ref)("var c2 = r.uint32()+r.pos");
+        gen("if(%s===util.emptyObject)", ref)("%s={}", ref)("var c2=r.uint32()+r.pos")("if(c2>r.len)")('throw RangeError("index out of range")')("r.len=c2");
         if (types2.defaults[field2.keyType] !== void 0) gen("k=%j", types2.defaults[field2.keyType]);
         else gen("k=null");
         if (types2.defaults[type2] !== void 0) gen("value=%j", types2.defaults[type2]);
@@ -13540,7 +13559,7 @@ function requireDecoder() {
         gen("while(r.pos<c2){")("var tag2=r.uint32()")("switch(tag2>>>3){")("case 1: k=r.%s(); break", field2.keyType)("case 2:");
         if (types2.basic[type2] === void 0) gen("value=types[%i].decode(r,r.uint32(),undefined,n+1)", i);
         else gen("value=r.%s()", type2);
-        gen("break")("default:")("r.skipType(tag2&7,n)")("break")("}")("}");
+        gen("break")("default:")("r.skipType(tag2&7,n)")("break")("}")("}")("if(r.pos!==c2)")('throw RangeError("index out of range")')("r.len=c");
         if (types2.long[field2.keyType] !== void 0) gen('%s[typeof k==="object"?util.longToHash(k):k]=value', ref);
         else {
           if (field2.keyType === "string") gen('if(k==="__proto__")')("util.makeProp(%s,k)", ref);
@@ -13548,7 +13567,7 @@ function requireDecoder() {
         }
       } else if (field2.repeated) {
         gen("if(!(%s&&%s.length))", ref, ref)("%s=[]", ref);
-        if (types2.packed[type2] !== void 0) gen("if((t&7)===2){")("var c2=r.uint32()+r.pos")("while(r.pos<c2)")("%s.push(r.%s())", ref, type2)("}else");
+        if (types2.packed[type2] !== void 0) gen("if((t&7)===2){")("var c2=r.uint32()+r.pos")("if(c2>r.len)")('throw RangeError("index out of range")')("r.len=c2")("while(r.pos<c2)")("%s.push(r.%s())", ref, type2)("if(r.pos!==c2)")('throw RangeError("index out of range")')("r.len=c")("}else");
         if (types2.basic[type2] === void 0) gen(field2.delimited ? "%s.push(types[%i].decode(r,undefined,((t&~7)|4),n+1))" : "%s.push(types[%i].decode(r,r.uint32(),undefined,n+1))", ref, i);
         else gen("%s.push(r.%s())", ref, type2);
       } else if (types2.basic[type2] === void 0) gen(field2.delimited ? "%s=types[%i].decode(r,undefined,((t&~7)|4),n+1)" : "%s=types[%i].decode(r,r.uint32(),undefined,n+1)", ref, i);
@@ -13556,6 +13575,7 @@ function requireDecoder() {
       gen("break")("}");
     }
     gen("default:")("r.skipType(t&7,n)")("break")("}")("}");
+    gen("if(l!==undefined){")("if(r.pos!==c)")('throw RangeError("index out of range")')("r.len=l")("}");
     for (i = 0; i < mtype._fieldsArray.length; ++i) {
       var rfield = mtype._fieldsArray[i];
       if (rfield.required) gen("if(!Object.hasOwnProperty.call(m,%j))", rfield.name)("throw util.ProtocolError(%j,{instance:m})", missing(rfield));
@@ -13886,6 +13906,10 @@ function requireWrappers() {
     var Message = requireMessage(), util2 = requireMinimal();
     wrappers2[".google.protobuf.Any"] = {
       fromObject: function(object2, depth) {
+        if (depth === void 0)
+          depth = 0;
+        if (depth > util2.recursionLimit)
+          throw Error("max depth exceeded");
         if (object2 && object2["@type"]) {
           var name2 = object2["@type"].substring(object2["@type"].lastIndexOf("/") + 1);
           var type2 = this.lookup(name2);
@@ -13896,7 +13920,7 @@ function requireWrappers() {
             }
             return this.create({
               type_url,
-              value: type2.encode(type2.fromObject(object2, depth === void 0 ? 1 : depth + 1)).finish()
+              value: type2.encode(type2.fromObject(object2, depth + 1)).finish()
             });
           }
         }
@@ -17827,10 +17851,10 @@ function requireChannelz() {
       this.socketChildren = /* @__PURE__ */ new Map();
     }
     refChild(child) {
-      var _a, _b, _c;
+      var _a2, _b2, _c2;
       switch (child.kind) {
         case "channel": {
-          const trackedChild = (_a = this.channelChildren.get(child.id)) !== null && _a !== void 0 ? _a : {
+          const trackedChild = (_a2 = this.channelChildren.get(child.id)) !== null && _a2 !== void 0 ? _a2 : {
             ref: child,
             count: 0
           };
@@ -17839,7 +17863,7 @@ function requireChannelz() {
           break;
         }
         case "subchannel": {
-          const trackedChild = (_b = this.subchannelChildren.get(child.id)) !== null && _b !== void 0 ? _b : {
+          const trackedChild = (_b2 = this.subchannelChildren.get(child.id)) !== null && _b2 !== void 0 ? _b2 : {
             ref: child,
             count: 0
           };
@@ -17848,7 +17872,7 @@ function requireChannelz() {
           break;
         }
         case "socket": {
-          const trackedChild = (_c = this.socketChildren.get(child.id)) !== null && _c !== void 0 ? _c : {
+          const trackedChild = (_c2 = this.socketChildren.get(child.id)) !== null && _c2 !== void 0 ? _c2 : {
             ref: child,
             count: 0
           };
@@ -18182,12 +18206,12 @@ function requireChannelz() {
     callback(null, { subchannel: subchannelMessage });
   }
   function subchannelAddressToAddressMessage(subchannelAddress2) {
-    var _a;
+    var _a2;
     if ((0, subchannel_address_1.isTcpSubchannelAddress)(subchannelAddress2)) {
       return {
         address: "tcpip_address",
         tcpip_address: {
-          ip_address: (_a = ipAddressStringToBuffer(subchannelAddress2.host)) !== null && _a !== void 0 ? _a : void 0,
+          ip_address: (_a2 = ipAddressStringToBuffer(subchannelAddress2.host)) !== null && _a2 !== void 0 ? _a2 : void 0,
           port: subchannelAddress2.port
         }
       };
@@ -18201,7 +18225,7 @@ function requireChannelz() {
     }
   }
   function GetSocket(call2, callback) {
-    var _a, _b, _c, _d, _e;
+    var _a2, _b2, _c2, _d2, _e2;
     const socketId = Number.parseInt(call2.request.socket_id);
     const socketEntry = sockets[socketId];
     if (socketEntry === void 0) {
@@ -18216,17 +18240,17 @@ function requireChannelz() {
       model: "tls",
       tls: {
         cipher_suite: resolvedInfo.security.cipherSuiteStandardName ? "standard_name" : "other_name",
-        standard_name: (_a = resolvedInfo.security.cipherSuiteStandardName) !== null && _a !== void 0 ? _a : void 0,
-        other_name: (_b = resolvedInfo.security.cipherSuiteOtherName) !== null && _b !== void 0 ? _b : void 0,
-        local_certificate: (_c = resolvedInfo.security.localCertificate) !== null && _c !== void 0 ? _c : void 0,
-        remote_certificate: (_d = resolvedInfo.security.remoteCertificate) !== null && _d !== void 0 ? _d : void 0
+        standard_name: (_a2 = resolvedInfo.security.cipherSuiteStandardName) !== null && _a2 !== void 0 ? _a2 : void 0,
+        other_name: (_b2 = resolvedInfo.security.cipherSuiteOtherName) !== null && _b2 !== void 0 ? _b2 : void 0,
+        local_certificate: (_c2 = resolvedInfo.security.localCertificate) !== null && _c2 !== void 0 ? _c2 : void 0,
+        remote_certificate: (_d2 = resolvedInfo.security.remoteCertificate) !== null && _d2 !== void 0 ? _d2 : void 0
       }
     } : null;
     const socketMessage = {
       ref: socketRefToMessage(socketEntry.ref),
       local: resolvedInfo.localAddress ? subchannelAddressToAddressMessage(resolvedInfo.localAddress) : null,
       remote: resolvedInfo.remoteAddress ? subchannelAddressToAddressMessage(resolvedInfo.remoteAddress) : null,
-      remote_name: (_e = resolvedInfo.remoteName) !== null && _e !== void 0 ? _e : void 0,
+      remote_name: (_e2 = resolvedInfo.remoteName) !== null && _e2 !== void 0 ? _e2 : void 0,
       security: securityMessage,
       data: {
         keep_alives_sent: resolvedInfo.keepAlivesSent,
@@ -18335,7 +18359,7 @@ function requireSubchannel() {
      *     connection
      */
     constructor(channelTarget, subchannelAddress2, options, credentials, connector) {
-      var _a;
+      var _a2;
       this.channelTarget = channelTarget;
       this.subchannelAddress = subchannelAddress2;
       this.options = options;
@@ -18359,7 +18383,7 @@ function requireSubchannel() {
       }, backoffOptions);
       this.backoffTimeout.unref();
       this.subchannelAddressString = (0, subchannel_address_1.subchannelAddressToString)(subchannelAddress2);
-      this.keepaliveTime = (_a = options["grpc.keepalive_time_ms"]) !== null && _a !== void 0 ? _a : -1;
+      this.keepaliveTime = (_a2 = options["grpc.keepalive_time_ms"]) !== null && _a2 !== void 0 ? _a2 : -1;
       if (options["grpc.enable_channelz"] === 0) {
         this.channelzEnabled = false;
       }
@@ -18436,7 +18460,7 @@ function requireSubchannel() {
      * @returns True if the state changed, false otherwise
      */
     transitionToState(oldStates, newState, errorMessage) {
-      var _a, _b;
+      var _a2, _b2;
       if (oldStates.indexOf(this.connectivityState) === -1) {
         return false;
       }
@@ -18459,7 +18483,7 @@ function requireSubchannel() {
           if (this.channelzEnabled && this.transport) {
             this.childrenTracker.unrefChild(this.transport.getChannelzRef());
           }
-          (_a = this.transport) === null || _a === void 0 ? void 0 : _a.shutdown();
+          (_a2 = this.transport) === null || _a2 === void 0 ? void 0 : _a2.shutdown();
           this.transport = null;
           if (!this.backoffTimeout.isRunning()) {
             process.nextTick(() => {
@@ -18471,7 +18495,7 @@ function requireSubchannel() {
           if (this.channelzEnabled && this.transport) {
             this.childrenTracker.unrefChild(this.transport.getChannelzRef());
           }
-          (_b = this.transport) === null || _b === void 0 ? void 0 : _b.shutdown();
+          (_b2 = this.transport) === null || _b2 === void 0 ? void 0 : _b2.shutdown();
           this.transport = null;
           break;
         default:
@@ -18640,7 +18664,7 @@ function requireResolverDns() {
     }
     class DnsResolver {
       constructor(target, listener, channelOptions2) {
-        var _a, _b, _c;
+        var _a2, _b2, _c2;
         this.target = target;
         this.listener = listener;
         this.pendingLookupPromise = null;
@@ -18663,7 +18687,7 @@ function requireResolverDns() {
             this.ipResult = [
               {
                 host: hostPort.host,
-                port: (_a = hostPort.port) !== null && _a !== void 0 ? _a : exports.DEFAULT_PORT
+                port: (_a2 = hostPort.port) !== null && _a2 !== void 0 ? _a2 : exports.DEFAULT_PORT
               }
             ];
             this.dnsHostname = null;
@@ -18671,7 +18695,7 @@ function requireResolverDns() {
           } else {
             this.ipResult = null;
             this.dnsHostname = hostPort.host;
-            this.port = (_b = hostPort.port) !== null && _b !== void 0 ? _b : exports.DEFAULT_PORT;
+            this.port = (_b2 = hostPort.port) !== null && _b2 !== void 0 ? _b2 : exports.DEFAULT_PORT;
           }
         }
         this.percentage = Math.random() * 100;
@@ -18693,7 +18717,7 @@ function requireResolverDns() {
           }
         }, backoffOptions);
         this.backoff.unref();
-        this.minTimeBetweenResolutionsMs = (_c = channelOptions2["grpc.dns_min_time_between_resolutions_ms"]) !== null && _c !== void 0 ? _c : DEFAULT_MIN_TIME_BETWEEN_RESOLUTIONS_MS;
+        this.minTimeBetweenResolutionsMs = (_c2 = channelOptions2["grpc.dns_min_time_between_resolutions_ms"]) !== null && _c2 !== void 0 ? _c2 : DEFAULT_MIN_TIME_BETWEEN_RESOLUTIONS_MS;
         this.nextResolutionTimer = setTimeout(() => {
         }, 0);
         clearTimeout(this.nextResolutionTimer);
@@ -18785,14 +18809,14 @@ function requireResolverDns() {
         }
       }
       startNextResolutionTimer() {
-        var _a, _b;
+        var _a2, _b2;
         clearTimeout(this.nextResolutionTimer);
-        this.nextResolutionTimer = (_b = (_a = setTimeout(() => {
+        this.nextResolutionTimer = (_b2 = (_a2 = setTimeout(() => {
           this.stopNextResolutionTimer();
           if (this.continueResolving) {
             this.startResolutionWithBackoff();
           }
-        }, this.minTimeBetweenResolutionsMs)).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+        }, this.minTimeBetweenResolutionsMs)).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
         this.isNextResolutionTimerRunning = true;
       }
       stopNextResolutionTimer() {
@@ -18939,12 +18963,12 @@ function requireHttp_proxy() {
     }
   }
   function mapProxyName(target, options) {
-    var _a;
+    var _a2;
     const noProxyResult = {
       target,
       extraOptions: {}
     };
-    if (((_a = options["grpc.enable_http_proxy"]) !== null && _a !== void 0 ? _a : 1) === 0) {
+    if (((_a2 = options["grpc.enable_http_proxy"]) !== null && _a2 !== void 0 ? _a2 : 1) === 0) {
       return noProxyResult;
     }
     if (target.scheme === "unix") {
@@ -18980,7 +19004,7 @@ function requireHttp_proxy() {
     };
   }
   function getProxiedConnection(address, channelOptions2, connectionOptions) {
-    var _a;
+    var _a2;
     if (!("grpc.http_connect_target" in channelOptions2)) {
       return Promise.resolve({});
     }
@@ -18993,7 +19017,7 @@ function requireHttp_proxy() {
     if (splitHostPost === null) {
       return Promise.resolve({});
     }
-    const hostPort = `${splitHostPost.host}:${(_a = splitHostPost.port) !== null && _a !== void 0 ? _a : resolver_dns_1.DEFAULT_PORT}`;
+    const hostPort = `${splitHostPost.host}:${(_a2 = splitHostPost.port) !== null && _a2 !== void 0 ? _a2 : resolver_dns_1.DEFAULT_PORT}`;
     const options = {
       method: "CONNECT",
       path: hostPort
@@ -19016,7 +19040,7 @@ function requireHttp_proxy() {
     return new Promise((resolve, reject) => {
       const request = http2.request(options);
       request.once("connect", (res, socket, head) => {
-        var _a2;
+        var _a22;
         request.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode === 200) {
@@ -19024,7 +19048,7 @@ function requireHttp_proxy() {
           if ("secureContext" in connectionOptions) {
             const targetPath = (0, resolver_1.getDefaultAuthority)(parsedTarget);
             const hostPort2 = (0, uri_parser_1.splitHostPort)(targetPath);
-            const remoteHost = (_a2 = hostPort2 === null || hostPort2 === void 0 ? void 0 : hostPort2.host) !== null && _a2 !== void 0 ? _a2 : targetPath;
+            const remoteHost = (_a22 = hostPort2 === null || hostPort2 === void 0 ? void 0 : hostPort2.host) !== null && _a22 !== void 0 ? _a22 : targetPath;
             const cts = tls.connect(Object.assign({ host: remoteHost, servername: remoteHost, socket }, connectionOptions), () => {
               trace("Successfully established a TLS connection to " + options.path + " through proxy " + proxyAddressString);
               resolve({ socket: cts, realTarget: parsedTarget });
@@ -19165,7 +19189,7 @@ function requireSubchannelCall() {
   }
   class Http2SubchannelCall {
     constructor(http2Stream, callEventTracker, listener, transport2, callId) {
-      var _a;
+      var _a2;
       this.http2Stream = http2Stream;
       this.callEventTracker = callEventTracker;
       this.listener = listener;
@@ -19180,7 +19204,7 @@ function requireSubchannelCall() {
       this.mappedStatusCode = constants_1.Status.UNKNOWN;
       this.finalStatus = null;
       this.internalError = null;
-      const maxReceiveMessageLength = (_a = transport2.getOptions()["grpc.max_receive_message_length"]) !== null && _a !== void 0 ? _a : constants_1.DEFAULT_MAX_RECEIVE_MESSAGE_LENGTH;
+      const maxReceiveMessageLength = (_a2 = transport2.getOptions()["grpc.max_receive_message_length"]) !== null && _a2 !== void 0 ? _a2 : constants_1.DEFAULT_MAX_RECEIVE_MESSAGE_LENGTH;
       this.decoder = new stream_decoder_1.StreamDecoder(maxReceiveMessageLength);
       http2Stream.on("response", (headers, flags) => {
         let headersString = "";
@@ -19255,9 +19279,9 @@ function requireSubchannelCall() {
       });
       http2Stream.on("close", () => {
         process.nextTick(() => {
-          var _a2;
+          var _a3;
           this.trace("HTTP/2 stream closed with code " + http2Stream.rstCode);
-          if (((_a2 = this.finalStatus) === null || _a2 === void 0 ? void 0 : _a2.code) === constants_1.Status.OK) {
+          if (((_a3 = this.finalStatus) === null || _a3 === void 0 ? void 0 : _a3.code) === constants_1.Status.OK) {
             return;
           }
           let code;
@@ -19418,10 +19442,10 @@ function requireSubchannelCall() {
       this.endCall(status);
     }
     destroyHttp2Stream() {
-      var _a;
+      var _a2;
       if (!this.http2Stream.destroyed) {
         let code;
-        if (((_a = this.finalStatus) === null || _a === void 0 ? void 0 : _a.code) === constants_1.Status.OK) {
+        if (((_a2 = this.finalStatus) === null || _a2 === void 0 ? void 0 : _a2.code) === constants_1.Status.OK) {
           code = http2.constants.NGHTTP2_NO_ERROR;
         } else {
           code = http2.constants.NGHTTP2_CANCEL;
@@ -19461,7 +19485,7 @@ function requireSubchannelCall() {
       this.trace("write() called with message of length " + message2.length);
       const cb = (error2) => {
         process.nextTick(() => {
-          var _a;
+          var _a2;
           let code = constants_1.Status.UNAVAILABLE;
           if ((error2 === null || error2 === void 0 ? void 0 : error2.code) === "ERR_STREAM_WRITE_AFTER_END") {
             code = constants_1.Status.INTERNAL;
@@ -19469,7 +19493,7 @@ function requireSubchannelCall() {
           if (error2) {
             this.cancelWithStatus(code, `Write error: ${error2.message}`);
           }
-          (_a = context.callback) === null || _a === void 0 ? void 0 : _a.call(context);
+          (_a2 = context.callback) === null || _a2 === void 0 ? void 0 : _a2.call(context);
         });
       };
       this.trace("sending data chunk of length " + message2.length);
@@ -19601,7 +19625,7 @@ function requireTransport() {
       }
     }
     getChannelzInfo() {
-      var _a, _b, _c;
+      var _a2, _b2, _c2;
       const sessionSocket = this.session.socket;
       const remoteAddress = sessionSocket.remoteAddress ? (0, subchannel_address_1.stringToSubchannelAddress)(sessionSocket.remoteAddress, sessionSocket.remotePort) : null;
       const localAddress = sessionSocket.localAddress ? (0, subchannel_address_1.stringToSubchannelAddress)(sessionSocket.localAddress, sessionSocket.localPort) : null;
@@ -19612,7 +19636,7 @@ function requireTransport() {
         const certificate = tlsSocket.getCertificate();
         const peerCertificate = tlsSocket.getPeerCertificate();
         tlsInfo = {
-          cipherSuiteStandardName: (_a = cipherInfo.standardName) !== null && _a !== void 0 ? _a : null,
+          cipherSuiteStandardName: (_a2 = cipherInfo.standardName) !== null && _a2 !== void 0 ? _a2 : null,
           cipherSuiteOtherName: cipherInfo.standardName ? null : cipherInfo.name,
           localCertificate: certificate && "raw" in certificate ? certificate.raw : null,
           remoteCertificate: peerCertificate && "raw" in peerCertificate ? peerCertificate.raw : null
@@ -19635,8 +19659,8 @@ function requireTransport() {
         lastRemoteStreamCreatedTimestamp: null,
         lastMessageSentTimestamp: this.lastMessageSentTimestamp,
         lastMessageReceivedTimestamp: this.lastMessageReceivedTimestamp,
-        localFlowControlWindow: (_b = this.session.state.localWindowSize) !== null && _b !== void 0 ? _b : null,
-        remoteFlowControlWindow: (_c = this.session.state.remoteWindowSize) !== null && _c !== void 0 ? _c : null
+        localFlowControlWindow: (_b2 = this.session.state.localWindowSize) !== null && _b2 !== void 0 ? _b2 : null,
+        remoteFlowControlWindow: (_c2 = this.session.state.remoteWindowSize) !== null && _c2 !== void 0 ? _c2 : null
       };
       return socketInfo;
     }
@@ -19700,7 +19724,7 @@ function requireTransport() {
       return this.keepaliveTimeMs > 0 && (this.keepaliveWithoutCalls || this.activeCalls.size > 0);
     }
     maybeSendPing() {
-      var _a, _b;
+      var _a2, _b2;
       this.clearKeepaliveTimer();
       if (!this.canSendPing()) {
         this.pendingSendKeepalivePing = true;
@@ -19715,7 +19739,7 @@ function requireTransport() {
           this.keepaliveTrace("Ping timeout passed without response");
           this.handleDisconnect();
         }, this.keepaliveTimeoutMs);
-        (_b = (_a = this.keepaliveTimeoutId).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+        (_b2 = (_a2 = this.keepaliveTimeoutId).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
       }
       try {
         this.session.ping((err, duration2, payload) => {
@@ -19738,7 +19762,7 @@ function requireTransport() {
      * instead do nothing and wait for them to resolve.
      */
     maybeStartKeepalivePingTimer() {
-      var _a, _b;
+      var _a2, _b2;
       if (!this.canSendPing()) {
         return;
       }
@@ -19747,9 +19771,9 @@ function requireTransport() {
         this.maybeSendPing();
       } else if (!this.keepaliveTimerId && !this.keepaliveTimeoutId) {
         this.keepaliveTrace("Starting keepalive timer for " + this.keepaliveTimeMs + "ms");
-        this.keepaliveTimerId = (_b = (_a = setTimeout(() => {
+        this.keepaliveTimerId = (_b2 = (_a2 = setTimeout(() => {
           this.maybeSendPing();
-        }, this.keepaliveTimeMs)).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+        }, this.keepaliveTimeMs)).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
       }
     }
     stopKeepalivePings() {
@@ -19797,50 +19821,50 @@ function requireTransport() {
         this.streamTracker.addCallStarted();
         eventTracker = {
           addMessageSent: () => {
-            var _a;
+            var _a2;
             this.messagesSent += 1;
             this.lastMessageSentTimestamp = /* @__PURE__ */ new Date();
-            (_a = subchannelCallStatsTracker.addMessageSent) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker);
+            (_a2 = subchannelCallStatsTracker.addMessageSent) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker);
           },
           addMessageReceived: () => {
-            var _a;
+            var _a2;
             this.messagesReceived += 1;
             this.lastMessageReceivedTimestamp = /* @__PURE__ */ new Date();
-            (_a = subchannelCallStatsTracker.addMessageReceived) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker);
+            (_a2 = subchannelCallStatsTracker.addMessageReceived) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker);
           },
           onCallEnd: (status) => {
-            var _a;
-            (_a = subchannelCallStatsTracker.onCallEnd) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker, status);
+            var _a2;
+            (_a2 = subchannelCallStatsTracker.onCallEnd) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker, status);
             this.removeActiveCall(call2);
           },
           onStreamEnd: (success) => {
-            var _a;
+            var _a2;
             if (success) {
               this.streamTracker.addCallSucceeded();
             } else {
               this.streamTracker.addCallFailed();
             }
-            (_a = subchannelCallStatsTracker.onStreamEnd) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker, success);
+            (_a2 = subchannelCallStatsTracker.onStreamEnd) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker, success);
           }
         };
       } else {
         eventTracker = {
           addMessageSent: () => {
-            var _a;
-            (_a = subchannelCallStatsTracker.addMessageSent) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker);
+            var _a2;
+            (_a2 = subchannelCallStatsTracker.addMessageSent) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker);
           },
           addMessageReceived: () => {
-            var _a;
-            (_a = subchannelCallStatsTracker.addMessageReceived) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker);
+            var _a2;
+            (_a2 = subchannelCallStatsTracker.addMessageReceived) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker);
           },
           onCallEnd: (status) => {
-            var _a;
-            (_a = subchannelCallStatsTracker.onCallEnd) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker, status);
+            var _a2;
+            (_a2 = subchannelCallStatsTracker.onCallEnd) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker, status);
             this.removeActiveCall(call2);
           },
           onStreamEnd: (success) => {
-            var _a;
-            (_a = subchannelCallStatsTracker.onStreamEnd) === null || _a === void 0 ? void 0 : _a.call(subchannelCallStatsTracker, success);
+            var _a2;
+            (_a2 = subchannelCallStatsTracker.onStreamEnd) === null || _a2 === void 0 ? void 0 : _a2.call(subchannelCallStatsTracker, success);
           }
         };
       }
@@ -19876,7 +19900,7 @@ function requireTransport() {
         return Promise.reject();
       }
       return new Promise((resolve, reject) => {
-        var _a, _b, _c;
+        var _a2, _b2, _c2;
         let remoteName;
         if (proxyConnectionResult.realTarget) {
           remoteName = (0, uri_parser_1.uriToString)(proxyConnectionResult.realTarget);
@@ -19885,7 +19909,7 @@ function requireTransport() {
           remoteName = null;
           this.trace("creating HTTP/2 session to " + (0, subchannel_address_1.subchannelAddressToString)(address));
         }
-        const targetAuthority = (0, resolver_1.getDefaultAuthority)((_a = proxyConnectionResult.realTarget) !== null && _a !== void 0 ? _a : this.channelTarget);
+        const targetAuthority = (0, resolver_1.getDefaultAuthority)((_a2 = proxyConnectionResult.realTarget) !== null && _a2 !== void 0 ? _a2 : this.channelTarget);
         let connectionOptions = credentials._getConnectionOptions() || {};
         connectionOptions.maxSendHeaderBlockLength = Number.MAX_SAFE_INTEGER;
         if ("grpc-node.max_session_memory" in options) {
@@ -19903,7 +19927,7 @@ function requireTransport() {
             };
             connectionOptions.servername = sslTargetNameOverride;
           } else {
-            const authorityHostname = (_c = (_b = (0, uri_parser_1.splitHostPort)(targetAuthority)) === null || _b === void 0 ? void 0 : _b.host) !== null && _c !== void 0 ? _c : "localhost";
+            const authorityHostname = (_c2 = (_b2 = (0, uri_parser_1.splitHostPort)(targetAuthority)) === null || _b2 === void 0 ? void 0 : _b2.host) !== null && _c2 !== void 0 ? _c2 : "localhost";
             connectionOptions.servername = authorityHostname;
           }
           if (proxyConnectionResult.socket) {
@@ -19943,7 +19967,7 @@ function requireTransport() {
       });
     }
     connect(address, credentials, options) {
-      var _a, _b;
+      var _a2, _b2;
       if (this.isShutdown) {
         return Promise.reject();
       }
@@ -19958,11 +19982,11 @@ function requireTransport() {
           connectionOptions.servername = sslTargetNameOverride;
         } else {
           if ("grpc.http_connect_target" in options) {
-            const targetPath = (0, resolver_1.getDefaultAuthority)((_a = (0, uri_parser_1.parseUri)(options["grpc.http_connect_target"])) !== null && _a !== void 0 ? _a : {
+            const targetPath = (0, resolver_1.getDefaultAuthority)((_a2 = (0, uri_parser_1.parseUri)(options["grpc.http_connect_target"])) !== null && _a2 !== void 0 ? _a2 : {
               path: "localhost"
             });
             const hostPort = (0, uri_parser_1.splitHostPort)(targetPath);
-            connectionOptions.servername = (_b = hostPort === null || hostPort === void 0 ? void 0 : hostPort.host) !== null && _b !== void 0 ? _b : targetPath;
+            connectionOptions.servername = (_b2 = hostPort === null || hostPort === void 0 ? void 0 : hostPort.host) !== null && _b2 !== void 0 ? _b2 : targetPath;
           }
         }
         if (options["grpc-node.tls_enable_trace"]) {
@@ -19972,9 +19996,9 @@ function requireTransport() {
       return (0, http_proxy_1.getProxiedConnection)(address, options, connectionOptions).then((result) => this.createSession(address, credentials, options, result));
     }
     shutdown() {
-      var _a;
+      var _a2;
       this.isShutdown = true;
-      (_a = this.session) === null || _a === void 0 ? void 0 : _a.close();
+      (_a2 = this.session) === null || _a2 === void 0 ? void 0 : _a2.close();
       this.session = null;
     }
   }
@@ -20026,12 +20050,12 @@ function requireSubchannelPool() {
      * Ensures that the cleanup task is spawned.
      */
     ensureCleanupTask() {
-      var _a, _b;
+      var _a2, _b2;
       if (this.cleanupTimer === null) {
         this.cleanupTimer = setInterval(() => {
           this.unrefUnusedSubchannels();
         }, REF_CHECK_INTERVAL);
-        (_b = (_a = this.cleanupTimer).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+        (_b2 = (_a2 = this.cleanupTimer).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
       }
     }
     /**
@@ -20369,18 +20393,18 @@ function requireCompressionFilter() {
   }
   class CompressionFilter extends filter_1.BaseFilter {
     constructor(channelOptions2, sharedFilterConfig) {
-      var _a, _b;
+      var _a2, _b2;
       super();
       this.sharedFilterConfig = sharedFilterConfig;
       this.sendCompression = new IdentityHandler();
       this.receiveCompression = new IdentityHandler();
       this.currentCompressionAlgorithm = "identity";
       const compressionAlgorithmKey = channelOptions2["grpc.default_compression_algorithm"];
-      this.maxReceiveMessageLength = (_a = channelOptions2["grpc.max_receive_message_length"]) !== null && _a !== void 0 ? _a : constants_1.DEFAULT_MAX_RECEIVE_MESSAGE_LENGTH;
+      this.maxReceiveMessageLength = (_a2 = channelOptions2["grpc.max_receive_message_length"]) !== null && _a2 !== void 0 ? _a2 : constants_1.DEFAULT_MAX_RECEIVE_MESSAGE_LENGTH;
       if (compressionAlgorithmKey !== void 0) {
         if (isCompressionAlgorithmKey(compressionAlgorithmKey)) {
           const clientSelectedEncoding = compression_algorithms_1.CompressionAlgorithms[compressionAlgorithmKey];
-          const serverSupportedEncodings = (_b = sharedFilterConfig.serverSupportedEncodingHeader) === null || _b === void 0 ? void 0 : _b.split(",");
+          const serverSupportedEncodings = (_b2 = sharedFilterConfig.serverSupportedEncodingHeader) === null || _b2 === void 0 ? void 0 : _b2.split(",");
           if (!serverSupportedEncodings || serverSupportedEncodings.includes(clientSelectedEncoding)) {
             this.currentCompressionAlgorithm = clientSelectedEncoding;
             this.sendCompression = getCompressionHandler(this.currentCompressionAlgorithm, -1);
@@ -20423,13 +20447,13 @@ function requireCompressionFilter() {
       return metadata2;
     }
     async sendMessage(message2) {
-      var _a;
+      var _a2;
       const resolvedMessage = await message2;
       let compress;
       if (this.sendCompression instanceof IdentityHandler) {
         compress = false;
       } else {
-        compress = (((_a = resolvedMessage.flags) !== null && _a !== void 0 ? _a : 0) & 2) === 0;
+        compress = (((_a2 = resolvedMessage.flags) !== null && _a2 !== void 0 ? _a2 : 0) & 2) === 0;
       }
       return {
         message: await this.sendCompression.writeMessage(resolvedMessage.message, compress),
@@ -20569,7 +20593,7 @@ function requireLoadBalancingCall() {
   const TRACER_NAME = "load_balancing_call";
   class LoadBalancingCall {
     constructor(channel2, callConfig, methodName, host, credentials, deadline2, callNumber2) {
-      var _a, _b;
+      var _a2, _b2;
       this.channel = channel2;
       this.callConfig = callConfig;
       this.methodName = methodName;
@@ -20590,24 +20614,24 @@ function requireLoadBalancingCall() {
       if (splitPath.length >= 2) {
         serviceName = splitPath[1];
       }
-      const hostname = (_b = (_a = (0, uri_parser_1.splitHostPort)(this.host)) === null || _a === void 0 ? void 0 : _a.host) !== null && _b !== void 0 ? _b : "localhost";
+      const hostname = (_b2 = (_a2 = (0, uri_parser_1.splitHostPort)(this.host)) === null || _a2 === void 0 ? void 0 : _a2.host) !== null && _b2 !== void 0 ? _b2 : "localhost";
       this.serviceUrl = `https://${hostname}/${serviceName}`;
     }
     trace(text) {
       logging2.trace(constants_1.LogVerbosity.DEBUG, TRACER_NAME, "[" + this.callNumber + "] " + text);
     }
     outputStatus(status, progress) {
-      var _a, _b;
+      var _a2, _b2;
       if (!this.ended) {
         this.ended = true;
         this.trace("ended with status: code=" + status.code + ' details="' + status.details + '"');
         const finalStatus = Object.assign(Object.assign({}, status), { progress });
-        (_a = this.listener) === null || _a === void 0 ? void 0 : _a.onReceiveStatus(finalStatus);
-        (_b = this.onCallEnded) === null || _b === void 0 ? void 0 : _b.call(this, finalStatus.code);
+        (_a2 = this.listener) === null || _a2 === void 0 ? void 0 : _a2.onReceiveStatus(finalStatus);
+        (_b2 = this.onCallEnded) === null || _b2 === void 0 ? void 0 : _b2.call(this, finalStatus.code);
       }
     }
     doPick() {
-      var _a, _b;
+      var _a2, _b2;
       if (this.ended) {
         return;
       }
@@ -20617,11 +20641,11 @@ function requireLoadBalancingCall() {
       this.trace("Pick called");
       const pickResult = this.channel.doPick(this.metadata, this.callConfig.pickInformation);
       const subchannelString = pickResult.subchannel ? "(" + pickResult.subchannel.getChannelzRef().id + ") " + pickResult.subchannel.getAddress() : "" + pickResult.subchannel;
-      this.trace("Pick result: " + picker_1.PickResultType[pickResult.pickResultType] + " subchannel: " + subchannelString + " status: " + ((_a = pickResult.status) === null || _a === void 0 ? void 0 : _a.code) + " " + ((_b = pickResult.status) === null || _b === void 0 ? void 0 : _b.details));
+      this.trace("Pick result: " + picker_1.PickResultType[pickResult.pickResultType] + " subchannel: " + subchannelString + " status: " + ((_a2 = pickResult.status) === null || _a2 === void 0 ? void 0 : _a2.code) + " " + ((_b2 = pickResult.status) === null || _b2 === void 0 ? void 0 : _b2.details));
       switch (pickResult.pickResultType) {
         case picker_1.PickResultType.COMPLETE:
           this.credentials.generateMetadata({ service_url: this.serviceUrl }).then((credsMetadata) => {
-            var _a2, _b2, _c;
+            var _a3, _b3, _c2;
             if (this.ended) {
               this.trace("Credentials metadata generation finished after call ended");
               return;
@@ -20671,8 +20695,8 @@ function requireLoadBalancingCall() {
               }, "NOT_STARTED");
               return;
             }
-            (_b2 = (_a2 = this.callConfig).onCommitted) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
-            (_c = pickResult.onCallStarted) === null || _c === void 0 ? void 0 : _c.call(pickResult);
+            (_b3 = (_a3 = this.callConfig).onCommitted) === null || _b3 === void 0 ? void 0 : _b3.call(_a3);
+            (_c2 = pickResult.onCallStarted) === null || _c2 === void 0 ? void 0 : _c2.call(pickResult);
             this.onCallEnded = pickResult.onCallEnded;
             this.trace("Created child call [" + this.child.getCallNumber() + "]");
             if (this.readPending) {
@@ -20714,14 +20738,14 @@ function requireLoadBalancingCall() {
       }
     }
     cancelWithStatus(status, details) {
-      var _a;
+      var _a2;
       this.trace("cancelWithStatus code: " + status + ' details: "' + details + '"');
-      (_a = this.child) === null || _a === void 0 ? void 0 : _a.cancelWithStatus(status, details);
+      (_a2 = this.child) === null || _a2 === void 0 ? void 0 : _a2.cancelWithStatus(status, details);
       this.outputStatus({ code: status, details, metadata: new metadata_1.Metadata() }, "PROCESSED");
     }
     getPeer() {
-      var _a, _b;
-      return (_b = (_a = this.child) === null || _a === void 0 ? void 0 : _a.getPeer()) !== null && _b !== void 0 ? _b : this.channel.getTarget();
+      var _a2, _b2;
+      return (_b2 = (_a2 = this.child) === null || _a2 === void 0 ? void 0 : _a2.getPeer()) !== null && _b2 !== void 0 ? _b2 : this.channel.getTarget();
     }
     start(metadata2, listener) {
       this.trace("start called");
@@ -20843,8 +20867,8 @@ function requireResolvingCall() {
         this.trace("ended with status: code=" + filteredStatus.code + ' details="' + filteredStatus.details + '"');
         this.statusWatchers.forEach((watcher) => watcher(filteredStatus));
         process.nextTick(() => {
-          var _a;
-          (_a = this.listener) === null || _a === void 0 ? void 0 : _a.onReceiveStatus(filteredStatus);
+          var _a2;
+          (_a2 = this.listener) === null || _a2 === void 0 ? void 0 : _a2.onReceiveStatus(filteredStatus);
         });
       }
     }
@@ -20946,17 +20970,17 @@ function requireResolvingCall() {
       });
     }
     reportResolverError(status) {
-      var _a;
-      if ((_a = this.metadata) === null || _a === void 0 ? void 0 : _a.getOptions().waitForReady) {
+      var _a2;
+      if ((_a2 = this.metadata) === null || _a2 === void 0 ? void 0 : _a2.getOptions().waitForReady) {
         this.channel.queueCallForConfig(this);
       } else {
         this.outputStatus(status);
       }
     }
     cancelWithStatus(status, details) {
-      var _a;
+      var _a2;
       this.trace("cancelWithStatus code: " + status + ' details: "' + details + '"');
-      (_a = this.child) === null || _a === void 0 ? void 0 : _a.cancelWithStatus(status, details);
+      (_a2 = this.child) === null || _a2 === void 0 ? void 0 : _a2.cancelWithStatus(status, details);
       this.outputStatus({
         code: status,
         details,
@@ -20964,8 +20988,8 @@ function requireResolvingCall() {
       });
     }
     getPeer() {
-      var _a, _b;
-      return (_b = (_a = this.child) === null || _a === void 0 ? void 0 : _a.getPeer()) !== null && _b !== void 0 ? _b : this.channel.getTarget();
+      var _a2, _b2;
+      return (_b2 = (_a2 = this.child) === null || _a2 === void 0 ? void 0 : _a2.getPeer()) !== null && _b2 !== void 0 ? _b2 : this.channel.getTarget();
     }
     start(metadata2, listener) {
       this.trace("start called");
@@ -21050,8 +21074,8 @@ function requireRetryingCall() {
       this.allocatedPerCall = /* @__PURE__ */ new Map();
     }
     allocate(size, callId) {
-      var _a;
-      const currentPerCall = (_a = this.allocatedPerCall.get(callId)) !== null && _a !== void 0 ? _a : 0;
+      var _a2;
+      const currentPerCall = (_a2 = this.allocatedPerCall.get(callId)) !== null && _a2 !== void 0 ? _a2 : 0;
       if (this.limitPerCall - currentPerCall < size || this.totalLimit - this.totalAllocated < size) {
         return false;
       }
@@ -21060,20 +21084,20 @@ function requireRetryingCall() {
       return true;
     }
     free(size, callId) {
-      var _a;
+      var _a2;
       if (this.totalAllocated < size) {
         throw new Error(`Invalid buffer allocation state: call ${callId} freed ${size} > total allocated ${this.totalAllocated}`);
       }
       this.totalAllocated -= size;
-      const currentPerCall = (_a = this.allocatedPerCall.get(callId)) !== null && _a !== void 0 ? _a : 0;
+      const currentPerCall = (_a2 = this.allocatedPerCall.get(callId)) !== null && _a2 !== void 0 ? _a2 : 0;
       if (currentPerCall < size) {
         throw new Error(`Invalid buffer allocation state: call ${callId} freed ${size} > allocated for call ${currentPerCall}`);
       }
       this.allocatedPerCall.set(callId, currentPerCall - size);
     }
     freeAll(callId) {
-      var _a;
-      const currentPerCall = (_a = this.allocatedPerCall.get(callId)) !== null && _a !== void 0 ? _a : 0;
+      var _a2;
+      const currentPerCall = (_a2 = this.allocatedPerCall.get(callId)) !== null && _a2 !== void 0 ? _a2 : 0;
       if (this.totalAllocated < currentPerCall) {
         throw new Error(`Invalid buffer allocation state: call ${callId} allocated ${currentPerCall} > total allocated ${this.totalAllocated}`);
       }
@@ -21128,8 +21152,8 @@ function requireRetryingCall() {
       this.writeBufferOffset = this.writeBufferOffset + this.writeBuffer.length;
       this.writeBuffer = [];
       process.nextTick(() => {
-        var _a;
-        (_a = this.listener) === null || _a === void 0 ? void 0 : _a.onReceiveStatus({
+        var _a2;
+        (_a2 = this.listener) === null || _a2 === void 0 ? void 0 : _a2.onReceiveStatus({
           code: statusObject.code,
           details: statusObject.details,
           metadata: statusObject.metadata
@@ -21151,8 +21175,8 @@ function requireRetryingCall() {
       }
     }
     getBufferEntry(messageIndex) {
-      var _a;
-      return (_a = this.writeBuffer[messageIndex - this.writeBufferOffset]) !== null && _a !== void 0 ? _a : {
+      var _a2;
+      return (_a2 = this.writeBuffer[messageIndex - this.writeBufferOffset]) !== null && _a2 !== void 0 ? _a2 : {
         entryType: "FREED",
         allocated: false
       };
@@ -21218,8 +21242,8 @@ function requireRetryingCall() {
       return list.some((value) => value === code || value.toString().toLowerCase() === constants_1.Status[code].toLowerCase());
     }
     getNextRetryBackoffMs() {
-      var _a;
-      const retryPolicy = (_a = this.callConfig) === null || _a === void 0 ? void 0 : _a.methodConfig.retryPolicy;
+      var _a2;
+      const retryPolicy = (_a2 = this.callConfig) === null || _a2 === void 0 ? void 0 : _a2.methodConfig.retryPolicy;
       if (!retryPolicy) {
         return 0;
       }
@@ -21250,12 +21274,12 @@ function requireRetryingCall() {
         this.nextRetryBackoffSec = this.initialRetryBackoffSec;
       }
       setTimeout(() => {
-        var _a, _b;
+        var _a2, _b2;
         if (this.state !== "RETRY") {
           callback(false);
           return;
         }
-        if ((_b = (_a = this.retryThrottler) === null || _a === void 0 ? void 0 : _a.canRetryCall()) !== null && _b !== void 0 ? _b : true) {
+        if ((_b2 = (_a2 = this.retryThrottler) === null || _a2 === void 0 ? void 0 : _a2.canRetryCall()) !== null && _b2 !== void 0 ? _b2 : true) {
           callback(true);
           this.attempts += 1;
           this.startNewAttempt();
@@ -21272,7 +21296,7 @@ function requireRetryingCall() {
       return count;
     }
     handleProcessedStatus(status, callIndex, pushback) {
-      var _a, _b, _c;
+      var _a2, _b2, _c2;
       switch (this.state) {
         case "COMMITTED":
         case "TRANSPARENT_ONLY":
@@ -21280,8 +21304,8 @@ function requireRetryingCall() {
           this.reportStatus(status);
           break;
         case "HEDGING":
-          if (this.isStatusCodeInList((_a = this.callConfig.methodConfig.hedgingPolicy.nonFatalStatusCodes) !== null && _a !== void 0 ? _a : [], status.code)) {
-            (_b = this.retryThrottler) === null || _b === void 0 ? void 0 : _b.addCallFailed();
+          if (this.isStatusCodeInList((_a2 = this.callConfig.methodConfig.hedgingPolicy.nonFatalStatusCodes) !== null && _a2 !== void 0 ? _a2 : [], status.code)) {
+            (_b2 = this.retryThrottler) === null || _b2 === void 0 ? void 0 : _b2.addCallFailed();
             let delayMs;
             if (pushback === null) {
               delayMs = 0;
@@ -21307,7 +21331,7 @@ function requireRetryingCall() {
           break;
         case "RETRY":
           if (this.isStatusCodeInList(this.callConfig.methodConfig.retryPolicy.retryableStatusCodes, status.code)) {
-            (_c = this.retryThrottler) === null || _c === void 0 ? void 0 : _c.addCallFailed();
+            (_c2 = this.retryThrottler) === null || _c2 === void 0 ? void 0 : _c2.addCallFailed();
             this.maybeRetryCall(pushback, (retried) => {
               if (!retried) {
                 this.commitCall(callIndex);
@@ -21333,14 +21357,14 @@ function requireRetryingCall() {
       }
     }
     handleChildStatus(status, callIndex) {
-      var _a;
+      var _a2;
       if (this.underlyingCalls[callIndex].state === "COMPLETED") {
         return;
       }
       this.trace("state=" + this.state + " handling status with progress " + status.progress + " from child [" + this.underlyingCalls[callIndex].call.getCallNumber() + "] in state " + this.underlyingCalls[callIndex].state);
       this.underlyingCalls[callIndex].state = "COMPLETED";
       if (status.code === constants_1.Status.OK) {
-        (_a = this.retryThrottler) === null || _a === void 0 ? void 0 : _a.addCallSucceeded();
+        (_a2 = this.retryThrottler) === null || _a2 === void 0 ? void 0 : _a2.addCallSucceeded();
         this.commitCall(callIndex);
         this.reportStatus(status);
         return;
@@ -21387,7 +21411,7 @@ function requireRetryingCall() {
       this.maybeStartHedgingTimer();
     }
     maybeStartHedgingTimer() {
-      var _a, _b, _c;
+      var _a2, _b2, _c2;
       if (this.hedgingTimer) {
         clearTimeout(this.hedgingTimer);
       }
@@ -21401,12 +21425,12 @@ function requireRetryingCall() {
       if (this.attempts >= Math.min(hedgingPolicy.maxAttempts, 5)) {
         return;
       }
-      const hedgingDelayString = (_a = hedgingPolicy.hedgingDelay) !== null && _a !== void 0 ? _a : "0s";
+      const hedgingDelayString = (_a2 = hedgingPolicy.hedgingDelay) !== null && _a2 !== void 0 ? _a2 : "0s";
       const hedgingDelaySec = Number(hedgingDelayString.substring(0, hedgingDelayString.length - 1));
       this.hedgingTimer = setTimeout(() => {
         this.maybeStartHedgingAttempt();
       }, hedgingDelaySec * 1e3);
-      (_c = (_b = this.hedgingTimer).unref) === null || _c === void 0 ? void 0 : _c.call(_b);
+      (_c2 = (_b2 = this.hedgingTimer).unref) === null || _c2 === void 0 ? void 0 : _c2.call(_b2);
     }
     startNewAttempt() {
       const child = this.channel.createLoadBalancingCall(this.callConfig, this.methodName, this.host, this.credentials, this.deadline);
@@ -21464,10 +21488,10 @@ function requireRetryingCall() {
       this.maybeStartHedgingTimer();
     }
     handleChildWriteCompleted(childIndex) {
-      var _a, _b;
+      var _a2, _b2;
       const childCall = this.underlyingCalls[childIndex];
       const messageIndex = childCall.nextMessageToSend;
-      (_b = (_a = this.getBufferEntry(messageIndex)).callback) === null || _b === void 0 ? void 0 : _b.call(_a);
+      (_b2 = (_a2 = this.getBufferEntry(messageIndex)).callback) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
       this.clearSentMessages();
       childCall.nextMessageToSend += 1;
       this.sendNextChildMessage(childIndex);
@@ -21495,7 +21519,7 @@ function requireRetryingCall() {
       }
     }
     sendMessageWithContext(context, message2) {
-      var _a;
+      var _a2;
       this.trace("write() called with message of length " + message2.length);
       const writeObj = {
         message: message2,
@@ -21509,7 +21533,7 @@ function requireRetryingCall() {
       };
       this.writeBuffer.push(bufferEntry);
       if (bufferEntry.allocated) {
-        (_a = context.callback) === null || _a === void 0 ? void 0 : _a.call(context);
+        (_a2 = context.callback) === null || _a2 === void 0 ? void 0 : _a2.call(context);
         for (const [callIndex, call2] of this.underlyingCalls.entries()) {
           if (call2.state === "ACTIVE" && call2.nextMessageToSend === messageIndex) {
             call2.call.sendMessageWithContext({
@@ -21676,7 +21700,7 @@ function requireInternalChannel() {
   }
   class InternalChannel {
     constructor(target, credentials, options) {
-      var _a, _b, _c, _d, _e, _f, _g, _h;
+      var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2;
       this.credentials = credentials;
       this.options = options;
       this.connectivityState = connectivity_state_1.ConnectivityState.IDLE;
@@ -21714,7 +21738,7 @@ function requireInternalChannel() {
       }
       this.callRefTimer = setInterval(() => {
       }, MAX_TIMEOUT_TIME);
-      (_b = (_a = this.callRefTimer).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+      (_b2 = (_a2 = this.callRefTimer).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
       if (this.options["grpc.enable_channelz"] === 0) {
         this.channelzEnabled = false;
       }
@@ -21731,10 +21755,10 @@ function requireInternalChannel() {
       const proxyMapResult = (0, http_proxy_1.mapProxyName)(defaultSchemeMapResult, options);
       this.target = proxyMapResult.target;
       this.options = Object.assign({}, this.options, proxyMapResult.extraOptions);
-      this.subchannelPool = (0, subchannel_pool_1.getSubchannelPool)(((_c = options["grpc.use_local_subchannel_pool"]) !== null && _c !== void 0 ? _c : 0) === 0);
-      this.retryBufferTracker = new retrying_call_1.MessageBufferTracker((_d = options["grpc.retry_buffer_size"]) !== null && _d !== void 0 ? _d : DEFAULT_RETRY_BUFFER_SIZE_BYTES, (_e = options["grpc.per_rpc_retry_buffer_size"]) !== null && _e !== void 0 ? _e : DEFAULT_PER_RPC_RETRY_BUFFER_SIZE_BYTES);
-      this.keepaliveTime = (_f = options["grpc.keepalive_time_ms"]) !== null && _f !== void 0 ? _f : -1;
-      this.idleTimeoutMs = Math.max((_g = options["grpc.client_idle_timeout_ms"]) !== null && _g !== void 0 ? _g : DEFAULT_IDLE_TIMEOUT_MS, MIN_IDLE_TIMEOUT_MS);
+      this.subchannelPool = (0, subchannel_pool_1.getSubchannelPool)(((_c2 = options["grpc.use_local_subchannel_pool"]) !== null && _c2 !== void 0 ? _c2 : 0) === 0);
+      this.retryBufferTracker = new retrying_call_1.MessageBufferTracker((_d2 = options["grpc.retry_buffer_size"]) !== null && _d2 !== void 0 ? _d2 : DEFAULT_RETRY_BUFFER_SIZE_BYTES, (_e2 = options["grpc.per_rpc_retry_buffer_size"]) !== null && _e2 !== void 0 ? _e2 : DEFAULT_PER_RPC_RETRY_BUFFER_SIZE_BYTES);
+      this.keepaliveTime = (_f2 = options["grpc.keepalive_time_ms"]) !== null && _f2 !== void 0 ? _f2 : -1;
+      this.idleTimeoutMs = Math.max((_g2 = options["grpc.client_idle_timeout_ms"]) !== null && _g2 !== void 0 ? _g2 : DEFAULT_IDLE_TIMEOUT_MS, MIN_IDLE_TIMEOUT_MS);
       const channelControlHelper = {
         createSubchannel: (subchannelAddress2, subchannelArgs) => {
           const subchannel2 = this.subchannelPool.getOrCreateSubchannel(this.target, subchannelAddress2, Object.assign({}, this.options, subchannelArgs), this.credentials);
@@ -21817,7 +21841,7 @@ function requireInternalChannel() {
       ]);
       this.trace("Channel constructed with options " + JSON.stringify(options, void 0, 2));
       const error2 = new Error();
-      (0, logging_1.trace)(constants_1.LogVerbosity.DEBUG, "channel_stacktrace", "(" + this.channelzRef.id + ") Channel constructed \n" + ((_h = error2.stack) === null || _h === void 0 ? void 0 : _h.substring(error2.stack.indexOf("\n") + 1)));
+      (0, logging_1.trace)(constants_1.LogVerbosity.DEBUG, "channel_stacktrace", "(" + this.channelzRef.id + ") Channel constructed \n" + ((_h2 = error2.stack) === null || _h2 === void 0 ? void 0 : _h2.substring(error2.stack.indexOf("\n") + 1)));
       this.lastActivityTimestamp = /* @__PURE__ */ new Date();
     }
     getChannelzInfo() {
@@ -21833,17 +21857,17 @@ function requireInternalChannel() {
       (0, logging_1.trace)(verbosityOverride !== null && verbosityOverride !== void 0 ? verbosityOverride : constants_1.LogVerbosity.DEBUG, "channel", "(" + this.channelzRef.id + ") " + (0, uri_parser_1.uriToString)(this.target) + " " + text);
     }
     callRefTimerRef() {
-      var _a, _b, _c, _d;
-      if (!((_b = (_a = this.callRefTimer).hasRef) === null || _b === void 0 ? void 0 : _b.call(_a))) {
+      var _a2, _b2, _c2, _d2;
+      if (!((_b2 = (_a2 = this.callRefTimer).hasRef) === null || _b2 === void 0 ? void 0 : _b2.call(_a2))) {
         this.trace("callRefTimer.ref | configSelectionQueue.length=" + this.configSelectionQueue.length + " pickQueue.length=" + this.pickQueue.length);
-        (_d = (_c = this.callRefTimer).ref) === null || _d === void 0 ? void 0 : _d.call(_c);
+        (_d2 = (_c2 = this.callRefTimer).ref) === null || _d2 === void 0 ? void 0 : _d2.call(_c2);
       }
     }
     callRefTimerUnref() {
-      var _a, _b;
+      var _a2, _b2;
       if (!this.callRefTimer.hasRef || this.callRefTimer.hasRef()) {
         this.trace("callRefTimer.unref | configSelectionQueue.length=" + this.configSelectionQueue.length + " pickQueue.length=" + this.pickQueue.length);
-        (_b = (_a = this.callRefTimer).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+        (_b2 = (_a2 = this.callRefTimer).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
       }
     }
     removeConnectivityStateWatcher(watcherObject) {
@@ -21927,7 +21951,7 @@ function requireInternalChannel() {
       }
     }
     startIdleTimeout(timeoutMs) {
-      var _a, _b;
+      var _a2, _b2;
       this.idleTimer = setTimeout(() => {
         if (this.callCount > 0) {
           this.startIdleTimeout(this.idleTimeoutMs);
@@ -21942,7 +21966,7 @@ function requireInternalChannel() {
           this.startIdleTimeout(this.idleTimeoutMs - timeSinceLastActivity);
         }
       }, timeoutMs);
-      (_b = (_a = this.idleTimer).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+      (_b2 = (_a2 = this.idleTimer).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
     }
     maybeStartIdleTimer() {
       if (this.connectivityState !== connectivity_state_1.ConnectivityState.SHUTDOWN && !this.idleTimer) {
@@ -22346,8 +22370,8 @@ function requireServerCall() {
       this.maxSendMessageSize = constants_1.DEFAULT_MAX_SEND_MESSAGE_LENGTH;
       this.maxReceiveMessageSize = constants_1.DEFAULT_MAX_RECEIVE_MESSAGE_LENGTH;
       this.stream.once("close", () => {
-        var _a;
-        trace("Request to method " + ((_a = this.handler) === null || _a === void 0 ? void 0 : _a.path) + " stream closed with rstCode " + this.stream.rstCode);
+        var _a2;
+        trace("Request to method " + ((_a2 = this.handler) === null || _a2 === void 0 ? void 0 : _a2.path) + " stream closed with rstCode " + this.stream.rstCode);
         if (!this.statusSent) {
           this.cancelled = true;
           this.emit("cancelled", "cancelled");
@@ -22562,28 +22586,28 @@ function requireServerCall() {
       }
     }
     sendStatus(statusObj) {
-      var _a, _b;
+      var _a2, _b2;
       this.emit("callEnd", statusObj.code);
       this.emit("streamEnd", statusObj.code === constants_1.Status.OK);
       if (this.checkCancelled()) {
         return;
       }
-      trace("Request to method " + ((_a = this.handler) === null || _a === void 0 ? void 0 : _a.path) + " ended with status code: " + constants_1.Status[statusObj.code] + " details: " + statusObj.details);
+      trace("Request to method " + ((_a2 = this.handler) === null || _a2 === void 0 ? void 0 : _a2.path) + " ended with status code: " + constants_1.Status[statusObj.code] + " details: " + statusObj.details);
       if (this.deadlineTimer)
         clearTimeout(this.deadlineTimer);
       if (this.stream.headersSent) {
         if (!this.wantTrailers) {
           this.wantTrailers = true;
           this.stream.once("wantTrailers", () => {
-            var _a2;
-            const trailersToSend = Object.assign({ [GRPC_STATUS_HEADER]: statusObj.code, [GRPC_MESSAGE_HEADER]: encodeURI(statusObj.details) }, (_a2 = statusObj.metadata) === null || _a2 === void 0 ? void 0 : _a2.toHttp2Headers());
+            var _a3;
+            const trailersToSend = Object.assign({ [GRPC_STATUS_HEADER]: statusObj.code, [GRPC_MESSAGE_HEADER]: encodeURI(statusObj.details) }, (_a3 = statusObj.metadata) === null || _a3 === void 0 ? void 0 : _a3.toHttp2Headers());
             this.stream.sendTrailers(trailersToSend);
             this.statusSent = true;
           });
           this.stream.end();
         }
       } else {
-        const trailersToSend = Object.assign(Object.assign({ [GRPC_STATUS_HEADER]: statusObj.code, [GRPC_MESSAGE_HEADER]: encodeURI(statusObj.details) }, defaultResponseHeaders), (_b = statusObj.metadata) === null || _b === void 0 ? void 0 : _b.toHttp2Headers());
+        const trailersToSend = Object.assign(Object.assign({ [GRPC_STATUS_HEADER]: statusObj.code, [GRPC_MESSAGE_HEADER]: encodeURI(statusObj.details) }, defaultResponseHeaders), (_b2 = statusObj.metadata) === null || _b2 === void 0 ? void 0 : _b2.toHttp2Headers());
         this.stream.respond(trailersToSend, { endStream: true });
         this.statusSent = true;
       }
@@ -22733,8 +22757,8 @@ function requireServerCall() {
       }
     }
     getPeer() {
-      var _a;
-      const socket = (_a = this.stream.session) === null || _a === void 0 ? void 0 : _a.socket;
+      var _a2;
+      const socket = (_a2 = this.stream.session) === null || _a2 === void 0 ? void 0 : _a2.socket;
       if (socket === null || socket === void 0 ? void 0 : socket.remoteAddress) {
         if (socket.remotePort) {
           return `${socket.remoteAddress}:${socket.remotePort}`;
@@ -22885,7 +22909,7 @@ function requireServer() {
   }
   class Server {
     constructor(options) {
-      var _a, _b, _c, _d;
+      var _a2, _b2, _c2, _d2;
       this.http2ServerList = [];
       this.handlers = /* @__PURE__ */ new Map();
       this.sessions = /* @__PURE__ */ new Map();
@@ -22905,10 +22929,10 @@ function requireServer() {
       if (this.channelzEnabled) {
         this.channelzTrace.addTrace("CT_INFO", "Server created");
       }
-      this.maxConnectionAgeMs = (_a = this.options["grpc.max_connection_age_ms"]) !== null && _a !== void 0 ? _a : UNLIMITED_CONNECTION_AGE_MS;
-      this.maxConnectionAgeGraceMs = (_b = this.options["grpc.max_connection_age_grace_ms"]) !== null && _b !== void 0 ? _b : UNLIMITED_CONNECTION_AGE_MS;
-      this.keepaliveTimeMs = (_c = this.options["grpc.keepalive_time_ms"]) !== null && _c !== void 0 ? _c : KEEPALIVE_MAX_TIME_MS;
-      this.keepaliveTimeoutMs = (_d = this.options["grpc.keepalive_timeout_ms"]) !== null && _d !== void 0 ? _d : KEEPALIVE_TIMEOUT_MS;
+      this.maxConnectionAgeMs = (_a2 = this.options["grpc.max_connection_age_ms"]) !== null && _a2 !== void 0 ? _a2 : UNLIMITED_CONNECTION_AGE_MS;
+      this.maxConnectionAgeGraceMs = (_b2 = this.options["grpc.max_connection_age_grace_ms"]) !== null && _b2 !== void 0 ? _b2 : UNLIMITED_CONNECTION_AGE_MS;
+      this.keepaliveTimeMs = (_c2 = this.options["grpc.keepalive_time_ms"]) !== null && _c2 !== void 0 ? _c2 : KEEPALIVE_MAX_TIME_MS;
+      this.keepaliveTimeoutMs = (_d2 = this.options["grpc.keepalive_timeout_ms"]) !== null && _d2 !== void 0 ? _d2 : KEEPALIVE_TIMEOUT_MS;
       this.trace("Server constructed");
     }
     getChannelzInfo() {
@@ -22921,7 +22945,7 @@ function requireServer() {
     }
     getChannelzSessionInfoGetter(session) {
       return () => {
-        var _a, _b, _c;
+        var _a2, _b2, _c2;
         const sessionInfo = this.sessions.get(session);
         const sessionSocket = session.socket;
         const remoteAddress = sessionSocket.remoteAddress ? (0, subchannel_address_1.stringToSubchannelAddress)(sessionSocket.remoteAddress, sessionSocket.remotePort) : null;
@@ -22933,7 +22957,7 @@ function requireServer() {
           const certificate = tlsSocket.getCertificate();
           const peerCertificate = tlsSocket.getPeerCertificate();
           tlsInfo = {
-            cipherSuiteStandardName: (_a = cipherInfo.standardName) !== null && _a !== void 0 ? _a : null,
+            cipherSuiteStandardName: (_a2 = cipherInfo.standardName) !== null && _a2 !== void 0 ? _a2 : null,
             cipherSuiteOtherName: cipherInfo.standardName ? null : cipherInfo.name,
             localCertificate: certificate && "raw" in certificate ? certificate.raw : null,
             remoteCertificate: peerCertificate && "raw" in peerCertificate ? peerCertificate.raw : null
@@ -22956,8 +22980,8 @@ function requireServer() {
           lastRemoteStreamCreatedTimestamp: sessionInfo.streamTracker.lastCallStartedTimestamp,
           lastMessageSentTimestamp: sessionInfo.lastMessageSentTimestamp,
           lastMessageReceivedTimestamp: sessionInfo.lastMessageReceivedTimestamp,
-          localFlowControlWindow: (_b = session.state.localWindowSize) !== null && _b !== void 0 ? _b : null,
-          remoteFlowControlWindow: (_c = session.state.remoteWindowSize) !== null && _c !== void 0 ? _c : null
+          localFlowControlWindow: (_b2 = session.state.localWindowSize) !== null && _b2 !== void 0 ? _b2 : null,
+          remoteFlowControlWindow: (_c2 = session.state.remoteWindowSize) !== null && _c2 !== void 0 ? _c2 : null
         };
         return socketInfo;
       };
@@ -23468,9 +23492,9 @@ function requireServer() {
       }
     }
     _runHandlerForCall(call2, handler, headers) {
-      var _a;
+      var _a2;
       const metadata2 = call2.receiveMetadata(headers);
-      const encoding = (_a = metadata2.get("grpc-encoding")[0]) !== null && _a !== void 0 ? _a : "identity";
+      const encoding = (_a2 = metadata2.get("grpc-encoding")[0]) !== null && _a2 !== void 0 ? _a2 : "identity";
       metadata2.remove("grpc-encoding");
       const { type: type2 } = handler;
       if (type2 === "unary") {
@@ -23503,12 +23527,12 @@ function requireServer() {
       const handler = this.channelzEnabled ? this._channelzHandler : this._streamHandler;
       http2Server.on("stream", handler.bind(this));
       http2Server.on("session", (session) => {
-        var _a, _b, _c, _d, _e;
+        var _a2, _b2, _c2, _d2, _e2;
         if (!this.started) {
           session.destroy();
           return;
         }
-        const channelzRef = (0, channelz_1.registerChannelzSocket)((_a = session.socket.remoteAddress) !== null && _a !== void 0 ? _a : "unknown", this.getChannelzSessionInfoGetter(session), this.channelzEnabled);
+        const channelzRef = (0, channelz_1.registerChannelzSocket)((_a2 = session.socket.remoteAddress) !== null && _a2 !== void 0 ? _a2 : "unknown", this.getChannelzSessionInfoGetter(session), this.channelzEnabled);
         const channelzSessionInfo = {
           ref: channelzRef,
           streamTracker: new channelz_1.ChannelzCallTracker(),
@@ -23529,8 +23553,8 @@ function requireServer() {
         if (this.maxConnectionAgeMs !== UNLIMITED_CONNECTION_AGE_MS) {
           const jitterMagnitude = this.maxConnectionAgeMs / 10;
           const jitter = Math.random() * jitterMagnitude * 2 - jitterMagnitude;
-          connectionAgeTimer = (_c = (_b = setTimeout(() => {
-            var _a2, _b2;
+          connectionAgeTimer = (_c2 = (_b2 = setTimeout(() => {
+            var _a3, _b3;
             sessionClosedByServer = true;
             if (this.channelzEnabled) {
               this.channelzTrace.addTrace("CT_INFO", "Connection dropped by max connection age from " + clientAddress);
@@ -23543,21 +23567,21 @@ function requireServer() {
             }
             session.close();
             if (this.maxConnectionAgeGraceMs !== UNLIMITED_CONNECTION_AGE_MS) {
-              connectionAgeGraceTimer = (_b2 = (_a2 = setTimeout(() => {
+              connectionAgeGraceTimer = (_b3 = (_a3 = setTimeout(() => {
                 session.destroy();
-              }, this.maxConnectionAgeGraceMs)).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
+              }, this.maxConnectionAgeGraceMs)).unref) === null || _b3 === void 0 ? void 0 : _b3.call(_a3);
             }
-          }, this.maxConnectionAgeMs + jitter)).unref) === null || _c === void 0 ? void 0 : _c.call(_b);
+          }, this.maxConnectionAgeMs + jitter)).unref) === null || _c2 === void 0 ? void 0 : _c2.call(_b2);
         }
-        const keeapliveTimeTimer = (_e = (_d = setInterval(() => {
-          var _a2, _b2;
-          const timeoutTImer = (_b2 = (_a2 = setTimeout(() => {
+        const keeapliveTimeTimer = (_e2 = (_d2 = setInterval(() => {
+          var _a3, _b3;
+          const timeoutTImer = (_b3 = (_a3 = setTimeout(() => {
             sessionClosedByServer = true;
             if (this.channelzEnabled) {
               this.channelzTrace.addTrace("CT_INFO", "Connection dropped by keepalive timeout from " + clientAddress);
             }
             session.close();
-          }, this.keepaliveTimeoutMs)).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
+          }, this.keepaliveTimeoutMs)).unref) === null || _b3 === void 0 ? void 0 : _b3.call(_a3);
           try {
             session.ping((err, duration2, payload) => {
               clearTimeout(timeoutTImer);
@@ -23565,7 +23589,7 @@ function requireServer() {
           } catch (e) {
             session.destroy();
           }
-        }, this.keepaliveTimeMs)).unref) === null || _e === void 0 ? void 0 : _e.call(_d);
+        }, this.keepaliveTimeMs)).unref) === null || _e2 === void 0 ? void 0 : _e2.call(_d2);
         session.on("close", () => {
           if (this.channelzEnabled) {
             if (!sessionClosedByServer) {
@@ -23719,7 +23743,7 @@ var hasRequiredLoadBalancerOutlierDetection;
 function requireLoadBalancerOutlierDetection() {
   if (hasRequiredLoadBalancerOutlierDetection) return loadBalancerOutlierDetection;
   hasRequiredLoadBalancerOutlierDetection = 1;
-  var _a;
+  var _a2;
   Object.defineProperty(loadBalancerOutlierDetection, "__esModule", { value: true });
   loadBalancerOutlierDetection.OutlierDetectionLoadBalancer = loadBalancerOutlierDetection.OutlierDetectionLoadBalancingConfig = void 0;
   loadBalancerOutlierDetection.setup = setup;
@@ -23738,7 +23762,7 @@ function requireLoadBalancerOutlierDetection() {
     logging2.trace(constants_1.LogVerbosity.DEBUG, TRACER_NAME, text);
   }
   const TYPE_NAME = "outlier_detection";
-  const OUTLIER_DETECTION_ENABLED = ((_a = process.env.GRPC_EXPERIMENTAL_ENABLE_OUTLIER_DETECTION) !== null && _a !== void 0 ? _a : "true") === "true";
+  const OUTLIER_DETECTION_ENABLED = ((_a2 = process.env.GRPC_EXPERIMENTAL_ENABLE_OUTLIER_DETECTION) !== null && _a2 !== void 0 ? _a2 : "true") === "true";
   const defaultSuccessRateEjectionConfig = {
     stdev_factor: 1900,
     enforcement_percentage: 100,
@@ -23827,7 +23851,7 @@ function requireLoadBalancerOutlierDetection() {
       return new OutlierDetectionLoadBalancingConfig(this.intervalMs, this.baseEjectionTimeMs, this.maxEjectionTimeMs, this.maxEjectionPercent, this.successRateEjection, this.failurePercentageEjection, childPolicy);
     }
     static createFromJson(obj) {
-      var _a2;
+      var _a22;
       validatePositiveDuration(obj, "interval");
       validatePositiveDuration(obj, "base_ejection_time");
       validatePositiveDuration(obj, "max_ejection_time");
@@ -23850,7 +23874,7 @@ function requireLoadBalancerOutlierDetection() {
         validateFieldType(obj.failure_percentage_ejection, "minimum_hosts", "number", "failure_percentage_ejection");
         validateFieldType(obj.failure_percentage_ejection, "request_volume", "number", "failure_percentage_ejection");
       }
-      return new OutlierDetectionLoadBalancingConfig(obj.interval ? (0, duration_1.durationToMs)(obj.interval) : null, obj.base_ejection_time ? (0, duration_1.durationToMs)(obj.base_ejection_time) : null, obj.max_ejection_time ? (0, duration_1.durationToMs)(obj.max_ejection_time) : null, (_a2 = obj.max_ejection_percent) !== null && _a2 !== void 0 ? _a2 : null, obj.success_rate_ejection, obj.failure_percentage_ejection, obj.child_policy.map(load_balancer_1.validateLoadBalancingConfig));
+      return new OutlierDetectionLoadBalancingConfig(obj.interval ? (0, duration_1.durationToMs)(obj.interval) : null, obj.base_ejection_time ? (0, duration_1.durationToMs)(obj.base_ejection_time) : null, obj.max_ejection_time ? (0, duration_1.durationToMs)(obj.max_ejection_time) : null, (_a22 = obj.max_ejection_percent) !== null && _a22 !== void 0 ? _a22 : null, obj.success_rate_ejection, obj.failure_percentage_ejection, obj.child_policy.map(load_balancer_1.validateLoadBalancingConfig));
     }
   }
   loadBalancerOutlierDetection.OutlierDetectionLoadBalancingConfig = OutlierDetectionLoadBalancingConfig;
@@ -23974,13 +23998,13 @@ function requireLoadBalancerOutlierDetection() {
           let onCallEnded = wrappedPick.onCallEnded;
           if (this.countCalls) {
             onCallEnded = (statusCode) => {
-              var _a2;
+              var _a22;
               if (statusCode === constants_1.Status.OK) {
                 mapEntry.counter.addSuccess();
               } else {
                 mapEntry.counter.addFailure();
               }
-              (_a2 = wrappedPick.onCallEnded) === null || _a2 === void 0 ? void 0 : _a2.call(wrappedPick, statusCode);
+              (_a22 = wrappedPick.onCallEnded) === null || _a22 === void 0 ? void 0 : _a22.call(wrappedPick, statusCode);
             };
           }
           return Object.assign(Object.assign({}, wrappedPick), { subchannel: subchannelWrapper.getWrappedSubchannel(), onCallEnded });
@@ -24148,9 +24172,9 @@ function requireLoadBalancerOutlierDetection() {
       }
     }
     startTimer(delayMs) {
-      var _a2, _b;
+      var _a22, _b2;
       this.ejectionTimer = setTimeout(() => this.runChecks(), delayMs);
-      (_b = (_a2 = this.ejectionTimer).unref) === null || _b === void 0 ? void 0 : _b.call(_a2);
+      (_b2 = (_a22 = this.ejectionTimer).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a22);
     }
     runChecks() {
       const ejectionTimestamp = /* @__PURE__ */ new Date();
@@ -24399,7 +24423,7 @@ function requireResolverIp() {
   const DEFAULT_PORT = 443;
   class IpResolver {
     constructor(target, listener, channelOptions2) {
-      var _a;
+      var _a2;
       this.listener = listener;
       this.addresses = [];
       this.error = null;
@@ -24435,7 +24459,7 @@ function requireResolverIp() {
         }
         addresses.push({
           host: hostPort.host,
-          port: (_a = hostPort.port) !== null && _a !== void 0 ? _a : DEFAULT_PORT
+          port: (_a2 = hostPort.port) !== null && _a2 !== void 0 ? _a2 : DEFAULT_PORT
         });
       }
       this.addresses = addresses;
@@ -24608,8 +24632,8 @@ function requireLoadBalancerPickFirst() {
       }
     }
     onSubchannelStateUpdate(subchannel2, previousState, newState, errorMessage) {
-      var _a;
-      if ((_a = this.currentPick) === null || _a === void 0 ? void 0 : _a.realSubchannelEquals(subchannel2)) {
+      var _a2;
+      if ((_a2 = this.currentPick) === null || _a2 === void 0 ? void 0 : _a2.realSubchannelEquals(subchannel2)) {
         if (newState !== connectivity_state_1.ConnectivityState.READY) {
           this.removeCurrentPick();
           this.calculateAndReportNewState();
@@ -24659,19 +24683,19 @@ function requireLoadBalancerPickFirst() {
      * @param subchannelIndex The index into the `subchannels` list.
      */
     startConnecting(subchannelIndex) {
-      var _a, _b;
+      var _a2, _b2;
       clearTimeout(this.connectionDelayTimeout);
       this.currentSubchannelIndex = subchannelIndex;
       if (this.children[subchannelIndex].subchannel.getConnectivityState() === connectivity_state_1.ConnectivityState.IDLE) {
         trace("Start connecting to subchannel with address " + this.children[subchannelIndex].subchannel.getAddress());
         process.nextTick(() => {
-          var _a2;
-          (_a2 = this.children[subchannelIndex]) === null || _a2 === void 0 ? void 0 : _a2.subchannel.startConnecting();
+          var _a3;
+          (_a3 = this.children[subchannelIndex]) === null || _a3 === void 0 ? void 0 : _a3.subchannel.startConnecting();
         });
       }
-      this.connectionDelayTimeout = (_b = (_a = setTimeout(() => {
+      this.connectionDelayTimeout = (_b2 = (_a2 = setTimeout(() => {
         this.startNextSubchannelConnecting(subchannelIndex + 1);
-      }, CONNECTION_DELAY_INTERVAL_MS)).unref) === null || _b === void 0 ? void 0 : _b.call(_a);
+      }, CONNECTION_DELAY_INTERVAL_MS)).unref) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
     }
     pickSubchannel(subchannel2) {
       if (this.currentPick && subchannel2.realSubchannelEquals(this.currentPick)) {
@@ -27765,8 +27789,8 @@ const TYPE_KEY$1 = "__type__";
 const PREVIOUS_VALUE_KEY = "__previous_value__";
 const LOCAL_WRITE_TIME_KEY = "__local_write_time__";
 function isServerTimestamp(value) {
-  var _a, _b;
-  const type2 = (_b = (((_a = value === null || value === void 0 ? void 0 : value.mapValue) === null || _a === void 0 ? void 0 : _a.fields) || {})[TYPE_KEY$1]) === null || _b === void 0 ? void 0 : _b.stringValue;
+  var _a2, _b2;
+  const type2 = (_b2 = (((_a2 = value === null || value === void 0 ? void 0 : value.mapValue) === null || _a2 === void 0 ? void 0 : _a2.fields) || {})[TYPE_KEY$1]) === null || _b2 === void 0 ? void 0 : _b2.stringValue;
   return type2 === SERVER_TIMESTAMP_SENTINEL;
 }
 function serverTimestamp$1(localWriteTime, previousValue) {
@@ -28141,12 +28165,12 @@ function compareArrays(left, right) {
   return primitiveComparator(leftArray.length, rightArray.length);
 }
 function compareVectors(left, right) {
-  var _a, _b, _c, _d;
+  var _a2, _b2, _c2, _d2;
   const leftMap = left.fields || {};
   const rightMap = right.fields || {};
-  const leftArrayValue = (_a = leftMap[VECTOR_MAP_VECTORS_KEY]) === null || _a === void 0 ? void 0 : _a.arrayValue;
-  const rightArrayValue = (_b = rightMap[VECTOR_MAP_VECTORS_KEY]) === null || _b === void 0 ? void 0 : _b.arrayValue;
-  const lengthCompare = primitiveComparator(((_c = leftArrayValue === null || leftArrayValue === void 0 ? void 0 : leftArrayValue.values) === null || _c === void 0 ? void 0 : _c.length) || 0, ((_d = rightArrayValue === null || rightArrayValue === void 0 ? void 0 : rightArrayValue.values) === null || _d === void 0 ? void 0 : _d.length) || 0);
+  const leftArrayValue = (_a2 = leftMap[VECTOR_MAP_VECTORS_KEY]) === null || _a2 === void 0 ? void 0 : _a2.arrayValue;
+  const rightArrayValue = (_b2 = rightMap[VECTOR_MAP_VECTORS_KEY]) === null || _b2 === void 0 ? void 0 : _b2.arrayValue;
+  const lengthCompare = primitiveComparator(((_c2 = leftArrayValue === null || leftArrayValue === void 0 ? void 0 : leftArrayValue.values) === null || _c2 === void 0 ? void 0 : _c2.length) || 0, ((_d2 = rightArrayValue === null || rightArrayValue === void 0 ? void 0 : rightArrayValue.values) === null || _d2 === void 0 ? void 0 : _d2.length) || 0);
   if (lengthCompare !== 0) {
     return lengthCompare;
   }
@@ -28315,8 +28339,8 @@ function isMapValue(value) {
   return !!value && "mapValue" in value;
 }
 function isVectorValue(value) {
-  var _a, _b;
-  const type2 = (_b = (((_a = value === null || value === void 0 ? void 0 : value.mapValue) === null || _a === void 0 ? void 0 : _a.fields) || {})[TYPE_KEY]) === null || _b === void 0 ? void 0 : _b.stringValue;
+  var _a2, _b2;
+  const type2 = (_b2 = (((_a2 = value === null || value === void 0 ? void 0 : value.mapValue) === null || _a2 === void 0 ? void 0 : _a2.fields) || {})[TYPE_KEY]) === null || _b2 === void 0 ? void 0 : _b2.stringValue;
   return type2 === VECTOR_VALUE_SENTINEL;
 }
 function deepClone(source) {
@@ -28994,8 +29018,8 @@ class KeyFieldNotInFilter extends FieldFilter {
   }
 }
 function extractDocumentKeysFromArrayValue(op, value) {
-  var _a;
-  return (((_a = value.arrayValue) === null || _a === void 0 ? void 0 : _a.values) || []).map((v) => {
+  var _a2;
+  return (((_a2 = value.arrayValue) === null || _a2 === void 0 ? void 0 : _a2.values) || []).map((v) => {
     return DocumentKey.fromName(v.referenceValue);
   });
 }
@@ -32378,8 +32402,8 @@ class LocalDocumentsView {
     return this.recalculateAndSaveOverlays(transaction, recalculateDocuments).next((recalculatedFields) => {
       recalculatedFields.forEach((documentKey, mask) => mutatedFields.set(documentKey, mask));
       docs.forEach((documentKey, document2) => {
-        var _a;
-        return results.set(documentKey, new OverlayedDocument(document2, (_a = mutatedFields.get(documentKey)) !== null && _a !== void 0 ? _a : null));
+        var _a2;
+        return results.set(documentKey, new OverlayedDocument(document2, (_a2 = mutatedFields.get(documentKey)) !== null && _a2 !== void 0 ? _a2 : null));
       });
       return results;
     });
@@ -39982,10 +40006,10 @@ async function syncEngineEmitNewSnapsAndNotifyLocalStore(syncEngine, changes, re
   }
   syncEngineImpl.queryViewsByQuery.forEach((_, queryView) => {
     queriesProcessed.push(syncEngineImpl.applyDocChanges(queryView, changes, remoteEvent).then((viewSnapshot) => {
-      var _a;
+      var _a2;
       if (viewSnapshot || remoteEvent) {
         if (syncEngineImpl.isPrimaryClient) {
-          const isCurrent = viewSnapshot ? !viewSnapshot.fromCache : (_a = remoteEvent === null || remoteEvent === void 0 ? void 0 : remoteEvent.targetChanges.get(queryView.targetId)) === null || _a === void 0 ? void 0 : _a.current;
+          const isCurrent = viewSnapshot ? !viewSnapshot.fromCache : (_a2 = remoteEvent === null || remoteEvent === void 0 ? void 0 : remoteEvent.targetChanges.get(queryView.targetId)) === null || _a2 === void 0 ? void 0 : _a2.current;
           syncEngineImpl.sharedClientState.updateQueryState(queryView.targetId, isCurrent ? "current" : "not-current");
         }
       }
@@ -40115,9 +40139,9 @@ class MemoryOfflineComponentProvider {
     return new MemorySharedClientState();
   }
   async terminate() {
-    var _a, _b;
-    (_a = this.gcScheduler) === null || _a === void 0 ? void 0 : _a.stop();
-    (_b = this.indexBackfillerScheduler) === null || _b === void 0 ? void 0 : _b.stop();
+    var _a2, _b2;
+    (_a2 = this.gcScheduler) === null || _a2 === void 0 ? void 0 : _a2.stop();
+    (_b2 = this.indexBackfillerScheduler) === null || _b2 === void 0 ? void 0 : _b2.stop();
     this.sharedClientState.shutdown();
     await this.persistence.shutdown();
   }
@@ -40184,10 +40208,10 @@ class OnlineComponentProvider {
     return newSyncEngine(this.localStore, this.remoteStore, this.eventManager, this.sharedClientState, cfg.initialUser, cfg.maxConcurrentLimboResolutions, startAsPrimary);
   }
   async terminate() {
-    var _a, _b;
+    var _a2, _b2;
     await remoteStoreShutdown(this.remoteStore);
-    (_a = this.datastore) === null || _a === void 0 ? void 0 : _a.terminate();
-    (_b = this.eventManager) === null || _b === void 0 ? void 0 : _b.terminate();
+    (_a2 = this.datastore) === null || _a2 === void 0 ? void 0 : _a2.terminate();
+    (_b2 = this.eventManager) === null || _b2 === void 0 ? void 0 : _b2.terminate();
   }
 }
 OnlineComponentProvider.provider = {
@@ -40543,7 +40567,7 @@ const MAX_LONG_POLLING_TIMEOUT_SECONDS = 30;
 const DEFAULT_AUTO_DETECT_LONG_POLLING = true;
 class FirestoreSettingsImpl {
   constructor(settings) {
-    var _a, _b;
+    var _a2, _b2;
     if (settings.host === void 0) {
       if (settings.ssl !== void 0) {
         throw new FirestoreError(Code.INVALID_ARGUMENT, "Can't provide ssl option if host option is not set");
@@ -40552,7 +40576,7 @@ class FirestoreSettingsImpl {
       this.ssl = DEFAULT_SSL;
     } else {
       this.host = settings.host;
-      this.ssl = (_a = settings.ssl) !== null && _a !== void 0 ? _a : DEFAULT_SSL;
+      this.ssl = (_a2 = settings.ssl) !== null && _a2 !== void 0 ? _a2 : DEFAULT_SSL;
     }
     this.isUsingEmulator = settings.emulatorOptions !== void 0;
     this.credentials = settings.credentials;
@@ -40576,7 +40600,7 @@ class FirestoreSettingsImpl {
     } else {
       this.experimentalAutoDetectLongPolling = !!settings.experimentalAutoDetectLongPolling;
     }
-    this.experimentalLongPollingOptions = cloneLongPollingOptions((_b = settings.experimentalLongPollingOptions) !== null && _b !== void 0 ? _b : {});
+    this.experimentalLongPollingOptions = cloneLongPollingOptions((_b2 = settings.experimentalLongPollingOptions) !== null && _b2 !== void 0 ? _b2 : {});
     validateLongPollingOptions(this.experimentalLongPollingOptions);
     this.useFetchStreams = !!settings.useFetchStreams;
   }
@@ -40697,7 +40721,7 @@ class Firestore$1 {
   }
 }
 function connectFirestoreEmulator(firestore2, host, port, options = {}) {
-  var _a;
+  var _a2;
   firestore2 = cast(firestore2, Firestore$1);
   const useSsl = isCloudWorkstation(host);
   const settings = firestore2._getSettings();
@@ -40722,7 +40746,7 @@ function connectFirestoreEmulator(firestore2, host, port, options = {}) {
       token = options.mockUserToken;
       user = User.MOCK_USER;
     } else {
-      token = createMockUserToken(options.mockUserToken, (_a = firestore2._app) === null || _a === void 0 ? void 0 : _a.options.projectId);
+      token = createMockUserToken(options.mockUserToken, (_a2 = firestore2._app) === null || _a2 === void 0 ? void 0 : _a2.options.projectId);
       const uid = options.mockUserToken.sub || options.mockUserToken.user_id;
       if (!uid) {
         throw new FirestoreError(Code.INVALID_ARGUMENT, "mockUserToken must contain 'sub' or 'user_id' field!");
@@ -41146,11 +41170,11 @@ function ensureFirestoreConfigured(firestore2) {
   return firestore2._firestoreClient;
 }
 function configureFirestore(firestore2) {
-  var _a, _b, _c;
+  var _a2, _b2, _c2;
   const settings = firestore2._freezeSettings();
-  const databaseInfo = makeDatabaseInfo(firestore2._databaseId, ((_a = firestore2._app) === null || _a === void 0 ? void 0 : _a.options.appId) || "", firestore2._persistenceKey, settings);
+  const databaseInfo = makeDatabaseInfo(firestore2._databaseId, ((_a2 = firestore2._app) === null || _a2 === void 0 ? void 0 : _a2.options.appId) || "", firestore2._persistenceKey, settings);
   if (!firestore2._componentsProvider) {
-    if (((_b = settings.localCache) === null || _b === void 0 ? void 0 : _b._offlineComponentProvider) && ((_c = settings.localCache) === null || _c === void 0 ? void 0 : _c._onlineComponentProvider)) {
+    if (((_b2 = settings.localCache) === null || _b2 === void 0 ? void 0 : _b2._offlineComponentProvider) && ((_c2 = settings.localCache) === null || _c2 === void 0 ? void 0 : _c2._onlineComponentProvider)) {
       firestore2._componentsProvider = {
         _offline: settings.localCache._offlineComponentProvider,
         _online: settings.localCache._onlineComponentProvider
@@ -41623,15 +41647,15 @@ class ParseContextImpl {
     return new ParseContextImpl(Object.assign(Object.assign({}, this.settings), configuration), this.databaseId, this.serializer, this.ignoreUndefinedProperties, this.fieldTransforms, this.fieldMask);
   }
   childContextForField(field2) {
-    var _a;
-    const childPath = (_a = this.path) === null || _a === void 0 ? void 0 : _a.child(field2);
+    var _a2;
+    const childPath = (_a2 = this.path) === null || _a2 === void 0 ? void 0 : _a2.child(field2);
     const context = this.contextWith({ path: childPath, arrayElement: false });
     context.validatePathSegment(field2);
     return context;
   }
   childContextForFieldPath(field2) {
-    var _a;
-    const childPath = (_a = this.path) === null || _a === void 0 ? void 0 : _a.child(field2);
+    var _a2;
+    const childPath = (_a2 = this.path) === null || _a2 === void 0 ? void 0 : _a2.child(field2);
     const context = this.contextWith({ path: childPath, arrayElement: false });
     context.validatePath();
     return context;
@@ -42458,8 +42482,8 @@ class AbstractUserDataWriter {
    * @internal
    */
   convertVectorValue(mapValue) {
-    var _a, _b, _c;
-    const values = (_c = (_b = (_a = mapValue.fields) === null || _a === void 0 ? void 0 : _a[VECTOR_MAP_VECTORS_KEY].arrayValue) === null || _b === void 0 ? void 0 : _b.values) === null || _c === void 0 ? void 0 : _c.map((value) => {
+    var _a2, _b2, _c2;
+    const values = (_c2 = (_b2 = (_a2 = mapValue.fields) === null || _a2 === void 0 ? void 0 : _a2[VECTOR_MAP_VECTORS_KEY].arrayValue) === null || _b2 === void 0 ? void 0 : _b2.values) === null || _c2 === void 0 ? void 0 : _c2.map((value) => {
       return normalizeNumber(value.doubleValue);
     });
     return new VectorValue(values);
@@ -43189,7 +43213,7 @@ function updateDoc(reference, fieldOrUpdateData, value, ...moreFieldsAndValues) 
   return executeWrite(firestore2, [mutation]);
 }
 function onSnapshot(reference, ...args) {
-  var _a, _b, _c;
+  var _a2, _b2, _c2;
   reference = getModularInstance(reference);
   let options = {
     includeMetadataChanges: false,
@@ -43205,9 +43229,9 @@ function onSnapshot(reference, ...args) {
   };
   if (isPartialObserver(args[currArg])) {
     const userObserver = args[currArg];
-    args[currArg] = (_a = userObserver.next) === null || _a === void 0 ? void 0 : _a.bind(userObserver);
-    args[currArg + 1] = (_b = userObserver.error) === null || _b === void 0 ? void 0 : _b.bind(userObserver);
-    args[currArg + 2] = (_c = userObserver.complete) === null || _c === void 0 ? void 0 : _c.bind(userObserver);
+    args[currArg] = (_a2 = userObserver.next) === null || _a2 === void 0 ? void 0 : _a2.bind(userObserver);
+    args[currArg + 1] = (_b2 = userObserver.error) === null || _b2 === void 0 ? void 0 : _b2.bind(userObserver);
+    args[currArg + 2] = (_c2 = userObserver.complete) === null || _c2 === void 0 ? void 0 : _c2.bind(userObserver);
   }
   let observer;
   let firestore2;
@@ -43385,21 +43409,35 @@ registerFirestore("node");
 let app = null;
 let auth = null;
 let firestore = null;
-function initializeEchoFirebase(config) {
+const defaultFirebaseConfig = {
+  apiKey: typeof process !== "undefined" && (((_a = process == null ? void 0 : process.env) == null ? void 0 : _a.EXPO_PUBLIC_FIREBASE_API_KEY) || ((_b = process == null ? void 0 : process.env) == null ? void 0 : _b.VITE_FIREBASE_API_KEY)) || "demo-api-key",
+  authDomain: typeof process !== "undefined" && (((_c = process == null ? void 0 : process.env) == null ? void 0 : _c.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN) || ((_d = process == null ? void 0 : process.env) == null ? void 0 : _d.VITE_FIREBASE_AUTH_DOMAIN)) || "echo-notif.firebaseapp.com",
+  projectId: typeof process !== "undefined" && (((_e = process == null ? void 0 : process.env) == null ? void 0 : _e.EXPO_PUBLIC_FIREBASE_PROJECT_ID) || ((_f = process == null ? void 0 : process.env) == null ? void 0 : _f.VITE_FIREBASE_PROJECT_ID)) || "echo-notif",
+  storageBucket: typeof process !== "undefined" && (((_g = process == null ? void 0 : process.env) == null ? void 0 : _g.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET) || ((_h = process == null ? void 0 : process.env) == null ? void 0 : _h.VITE_FIREBASE_STORAGE_BUCKET)) || "echo-notif.appspot.com",
+  messagingSenderId: typeof process !== "undefined" && (((_i = process == null ? void 0 : process.env) == null ? void 0 : _i.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID) || ((_j = process == null ? void 0 : process.env) == null ? void 0 : _j.VITE_FIREBASE_MESSAGING_SENDER_ID)) || "0000000000",
+  appId: typeof process !== "undefined" && (((_k = process == null ? void 0 : process.env) == null ? void 0 : _k.EXPO_PUBLIC_FIREBASE_APP_ID) || ((_l = process == null ? void 0 : process.env) == null ? void 0 : _l.VITE_FIREBASE_APP_ID)) || "1:0000000000:web:0000000000"
+};
+function initializeEchoFirebase(config = defaultFirebaseConfig) {
   app = getApps().length > 0 ? getApp() : initializeApp(config);
-  auth = getAuth(app);
+  try {
+    auth = initializeAuth(app, {
+      persistence: inMemoryPersistence
+    });
+  } catch {
+    auth = getAuth(app);
+  }
   firestore = getFirestore(app);
   return { app, auth, firestore };
 }
 function getEchoAuth() {
   if (!auth) {
-    throw new Error("Firebase Auth has not been initialized. Call initializeEchoFirebase() first.");
+    initializeEchoFirebase(defaultFirebaseConfig);
   }
   return auth;
 }
 function getEchoFirestore() {
   if (!firestore) {
-    throw new Error("Firestore has not been initialized. Call initializeEchoFirebase() first.");
+    initializeEchoFirebase(defaultFirebaseConfig);
   }
   return firestore;
 }
@@ -43521,7 +43559,7 @@ function performGoogleOAuthFlow(clientId, clientSecret) {
       }
     }, 18e4);
     server2 = http.createServer(async (req, res) => {
-      var _a;
+      var _a2;
       try {
         if (!req.url) {
           res.writeHead(400);
@@ -43606,7 +43644,7 @@ function performGoogleOAuthFlow(clientId, clientSecret) {
             </body>
           </html>
         `);
-        const port = (_a = server2 == null ? void 0 : server2.address()) == null ? void 0 : _a.port;
+        const port = (_a2 = server2 == null ? void 0 : server2.address()) == null ? void 0 : _a2.port;
         const redirectUri = `http://127.0.0.1:${port}`;
         const tokenParams = new URLSearchParams({
           code: code || "",
@@ -43673,8 +43711,6 @@ function performGoogleOAuthFlow(clientId, clientSecret) {
       authUrl.searchParams.set("scope", "openid email profile");
       authUrl.searchParams.set("code_challenge", challenge);
       authUrl.searchParams.set("code_challenge_method", "S256");
-      authUrl.searchParams.set("state", state);
-      authUrl.searchParams.set("prompt", "select_account");
       shell.openExternal(authUrl.toString());
     });
     server2.on("error", (err) => {
@@ -43682,6 +43718,33 @@ function performGoogleOAuthFlow(clientId, clientSecret) {
       reject(err);
     });
   });
+}
+async function refreshGoogleIdToken(clientId, refreshToken, clientSecret) {
+  const tokenParams = new URLSearchParams({
+    client_id: clientId,
+    refresh_token: refreshToken,
+    grant_type: "refresh_token"
+  });
+  if (clientSecret) {
+    tokenParams.append("client_secret", clientSecret);
+  }
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: tokenParams.toString()
+  });
+  if (!tokenResponse.ok) {
+    const errBody = await tokenResponse.text();
+    throw new Error(`Failed to refresh Google token: ${tokenResponse.status} ${errBody}`);
+  }
+  const tokenData = await tokenResponse.json();
+  if (!tokenData.id_token) {
+    throw new Error("No id_token returned during refresh");
+  }
+  return {
+    idToken: tokenData.id_token,
+    accessToken: tokenData.access_token
+  };
 }
 const __filename$1 = fileURLToPath(import.meta.url);
 const __dirname$1 = path$1.dirname(__filename$1);
@@ -43719,6 +43782,9 @@ function loadEnvironmentVariables() {
   }
 }
 loadEnvironmentVariables();
+if (process.platform === "win32") {
+  app$1.setAppUserModelId("com.echo.notificationbridge");
+}
 const gotTheLock = app$1.requestSingleInstanceLock();
 if (!gotTheLock) {
   app$1.quit();
@@ -43792,17 +43858,44 @@ function clearSessionSync() {
   }
 }
 async function restoreFirebaseAuth(session) {
-  if (!session.idToken) return false;
-  try {
-    const auth2 = getEchoAuth();
-    if (!auth2.currentUser || auth2.currentUser.uid !== session.uid) {
-      await signInWithGoogleCredential(session.idToken);
-    }
+  const auth2 = getEchoAuth();
+  if (auth2.currentUser && auth2.currentUser.uid === session.uid) {
     return true;
-  } catch (err) {
-    console.warn("Could not restore Firebase session with cached token:", err);
-    return false;
   }
+  if (session.idToken) {
+    try {
+      await signInWithGoogleCredential(session.idToken);
+      return true;
+    } catch (err) {
+      const isStale = err && typeof err === "object" && "code" in err && err.code === "auth/invalid-credential" || err instanceof Error && err.message.includes("stale");
+      if (!isStale) {
+        console.warn(
+          "Could not restore Firebase session with cached token:",
+          err
+        );
+      }
+    }
+  }
+  if (session.refreshToken) {
+    try {
+      const clientId = process.env.VITE_GOOGLE_CLIENT_ID || "";
+      const clientSecret = process.env.VITE_GOOGLE_CLIENT_SECRET;
+      if (clientId) {
+        const { idToken, accessToken } = await refreshGoogleIdToken(
+          clientId,
+          session.refreshToken,
+          clientSecret
+        );
+        await signInWithGoogleCredential(idToken, accessToken);
+        session.idToken = idToken;
+        storeSessionSync(session);
+        return true;
+      }
+    } catch (refreshErr) {
+      console.warn("Failed to refresh Google token automatically:", refreshErr);
+    }
+  }
+  return false;
 }
 function updateTrayMenu() {
   if (!tray) return;
@@ -43851,13 +43944,58 @@ function updateTrayMenu() {
     }
   ]);
   tray.setContextMenu(contextMenu);
-  tray.setToolTip(`Echo — ${unreadCount > 0 ? `${unreadCount} unread` : "Listening"}`);
+  tray.setToolTip(
+    `Echo — ${unreadCount > 0 ? `${unreadCount} unread` : "Listening"}`
+  );
+}
+function getAppIcon() {
+  const candidates = [
+    path$1.join(__dirname$1, "../public/icon.png"),
+    path$1.join(__dirname$1, "../dist/icon.png"),
+    path$1.join(__dirname$1, "public/icon.png"),
+    path$1.join(process.cwd(), "apps/desktop/public/icon.png"),
+    path$1.join(process.cwd(), "public/icon.png"),
+    path$1.join(process.resourcesPath || "", "icon.png"),
+    path$1.join(process.resourcesPath || "", "public/icon.png")
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      const img = nativeImage.createFromPath(p);
+      if (!img.isEmpty()) return img;
+    }
+  }
+  return nativeImage.createEmpty();
+}
+function getTrayIcon() {
+  const candidates = [
+    path$1.join(__dirname$1, "../public/32x32.png"),
+    path$1.join(__dirname$1, "../public/16x16.png"),
+    path$1.join(__dirname$1, "../public/favicon.png"),
+    path$1.join(__dirname$1, "../dist/32x32.png"),
+    path$1.join(__dirname$1, "../dist/favicon.png"),
+    path$1.join(process.cwd(), "apps/desktop/public/32x32.png"),
+    path$1.join(process.cwd(), "public/32x32.png")
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      const img = nativeImage.createFromPath(p);
+      if (!img.isEmpty()) return img;
+    }
+  }
+  const appIcon = getAppIcon();
+  if (!appIcon.isEmpty()) {
+    return appIcon.resize({ width: 16, height: 16 });
+  }
+  return nativeImage.createEmpty();
 }
 function createTray() {
-  const icon = nativeImage.createEmpty();
+  const icon = getTrayIcon();
   tray = new Tray(icon);
   updateTrayMenu();
   tray.on("double-click", () => {
+    openInboxWindow();
+  });
+  tray.on("click", () => {
     openInboxWindow();
   });
 }
@@ -43879,10 +44017,13 @@ function openInboxWindow() {
     if (process.env.VITE_DEV_SERVER_URL) {
       mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#inbox`);
     } else {
-      mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), { hash: "inbox" });
+      mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), {
+        hash: "inbox"
+      });
     }
     return;
   }
+  const appIcon = getAppIcon();
   mainWindow = new BrowserWindow({
     width: 480,
     height: 640,
@@ -43890,6 +44031,7 @@ function openInboxWindow() {
     frame: false,
     transparent: true,
     backgroundMaterial: "acrylic",
+    icon: !appIcon.isEmpty() ? appIcon : void 0,
     minimizable: true,
     maximizable: false,
     resizable: false,
@@ -43903,7 +44045,9 @@ function openInboxWindow() {
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#inbox`);
   } else {
-    mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), { hash: "inbox" });
+    mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), {
+      hash: "inbox"
+    });
   }
   mainWindow.once("ready-to-show", () => {
     mainWindow == null ? void 0 : mainWindow.show();
@@ -43919,10 +44063,13 @@ function openPairWindow() {
     if (process.env.VITE_DEV_SERVER_URL) {
       mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#pair`);
     } else {
-      mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), { hash: "pair" });
+      mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), {
+        hash: "pair"
+      });
     }
     return;
   }
+  const appIcon = getAppIcon();
   mainWindow = new BrowserWindow({
     width: 480,
     height: 640,
@@ -43930,6 +44077,7 @@ function openPairWindow() {
     frame: false,
     transparent: true,
     backgroundMaterial: "acrylic",
+    icon: !appIcon.isEmpty() ? appIcon : void 0,
     minimizable: true,
     maximizable: false,
     resizable: false,
@@ -43943,7 +44091,9 @@ function openPairWindow() {
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#pair`);
   } else {
-    mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), { hash: "pair" });
+    mainWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), {
+      hash: "pair"
+    });
   }
   mainWindow.once("ready-to-show", () => {
     mainWindow == null ? void 0 : mainWindow.show();
@@ -43954,17 +44104,25 @@ function openPairWindow() {
 }
 function showReplyToast(notification) {
   if (isPaused || isFocusAssistActive) return;
-  const existingIdx = activeToastNotifications.findIndex((n) => n.id === notification.id);
+  const existingIdx = activeToastNotifications.findIndex(
+    (n) => n.id === notification.id
+  );
   if (existingIdx >= 0) {
     activeToastNotifications[existingIdx] = notification;
   } else {
-    activeToastNotifications = [notification, ...activeToastNotifications.filter((n) => n.id !== notification.id)].slice(0, 4);
+    activeToastNotifications = [
+      notification,
+      ...activeToastNotifications.filter((n) => n.id !== notification.id)
+    ].slice(0, 4);
   }
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
   const toastWidth = 420;
   const estimatedCardHeight = 160;
-  const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+  const toastHeight = Math.min(
+    height - 40,
+    activeToastNotifications.length * estimatedCardHeight + 20
+  );
   if (toastWindow && !toastWindow.isDestroyed()) {
     toastWindow.setBounds({
       x: width - toastWidth - 24,
@@ -43972,10 +44130,14 @@ function showReplyToast(notification) {
       width: toastWidth,
       height: toastHeight
     });
-    toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+    toastWindow.webContents.send(
+      "toast-stack-updated",
+      activeToastNotifications
+    );
     toastWindow.webContents.send("notification-received", notification);
     return;
   }
+  const appIcon = getAppIcon();
   toastWindow = new BrowserWindow({
     width: toastWidth,
     height: toastHeight,
@@ -43989,6 +44151,7 @@ function showReplyToast(notification) {
     skipTaskbar: true,
     resizable: false,
     focusable: true,
+    icon: !appIcon.isEmpty() ? appIcon : void 0,
     webPreferences: {
       preload: getPreloadPath(),
       contextIsolation: true,
@@ -43999,10 +44162,15 @@ function showReplyToast(notification) {
   if (process.env.VITE_DEV_SERVER_URL) {
     toastWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#toast`);
   } else {
-    toastWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), { hash: "toast" });
+    toastWindow.loadFile(path$1.join(__dirname$1, "../dist/index.html"), {
+      hash: "toast"
+    });
   }
   toastWindow.webContents.once("did-finish-load", () => {
-    toastWindow == null ? void 0 : toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+    toastWindow == null ? void 0 : toastWindow.webContents.send(
+      "toast-stack-updated",
+      activeToastNotifications
+    );
   });
   toastWindow.on("closed", () => {
     toastWindow = null;
@@ -44097,7 +44265,10 @@ function registerIpcHandlers() {
         throw new Error("Missing VITE_GOOGLE_CLIENT_ID in your .env file.");
       }
       const authResult = await performGoogleOAuthFlow(clientId, clientSecret);
-      const user = await signInWithGoogleCredential(authResult.idToken, authResult.accessToken);
+      const user = await signInWithGoogleCredential(
+        authResult.idToken,
+        authResult.accessToken
+      );
       const session = {
         uid: user.uid,
         email: user.email || authResult.email || "",
@@ -44154,7 +44325,9 @@ function registerIpcHandlers() {
   });
   ipcMain.handle("dismiss-toast", (_, notificationId) => {
     if (notificationId) {
-      activeToastNotifications = activeToastNotifications.filter((n) => n.id !== notificationId);
+      activeToastNotifications = activeToastNotifications.filter(
+        (n) => n.id !== notificationId
+      );
     } else {
       activeToastNotifications = [];
     }
@@ -44168,14 +44341,20 @@ function registerIpcHandlers() {
       const { width, height } = primaryDisplay.workAreaSize;
       const toastWidth = 420;
       const estimatedCardHeight = 160;
-      const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+      const toastHeight = Math.min(
+        height - 40,
+        activeToastNotifications.length * estimatedCardHeight + 20
+      );
       toastWindow.setBounds({
         x: width - toastWidth - 24,
         y: height - toastHeight - 24,
         width: toastWidth,
         height: toastHeight
       });
-      toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+      toastWindow.webContents.send(
+        "toast-stack-updated",
+        activeToastNotifications
+      );
     }
   });
   ipcMain.handle("send-test-notification", async () => {
@@ -44268,9 +44447,13 @@ function registerIpcHandlers() {
     try {
       const replyId = await createReply(session.uid, payload);
       if (payload.notificationId) {
-        await markNotificationRead(session.uid, payload.notificationId).catch(() => {
-        });
-        activeToastNotifications = activeToastNotifications.filter((n) => n.id !== payload.notificationId);
+        await markNotificationRead(session.uid, payload.notificationId).catch(
+          () => {
+          }
+        );
+        activeToastNotifications = activeToastNotifications.filter(
+          (n) => n.id !== payload.notificationId
+        );
       }
       if (activeToastNotifications.length === 0) {
         if (toastWindow && !toastWindow.isDestroyed()) {
@@ -44282,31 +44465,43 @@ function registerIpcHandlers() {
         const { width, height } = primaryDisplay.workAreaSize;
         const toastWidth = 420;
         const estimatedCardHeight = 160;
-        const toastHeight = Math.min(height - 40, activeToastNotifications.length * estimatedCardHeight + 20);
+        const toastHeight = Math.min(
+          height - 40,
+          activeToastNotifications.length * estimatedCardHeight + 20
+        );
         toastWindow.setBounds({
           x: width - toastWidth - 24,
           y: height - toastHeight - 24,
           width: toastWidth,
           height: toastHeight
         });
-        toastWindow.webContents.send("toast-stack-updated", activeToastNotifications);
+        toastWindow.webContents.send(
+          "toast-stack-updated",
+          activeToastNotifications
+        );
       }
       return { success: true, replyId };
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : "Failed to send reply" };
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : "Failed to send reply"
+      };
     }
   });
   ipcMain.handle("get-notifications", () => {
     return currentNotifications;
   });
-  ipcMain.handle("mark-notification-read", async (_, notificationId) => {
-    const session = getStoredSessionSync();
-    if (!(session == null ? void 0 : session.uid)) return;
-    try {
-      await markNotificationRead(session.uid, notificationId);
-    } catch {
+  ipcMain.handle(
+    "mark-notification-read",
+    async (_, notificationId) => {
+      const session = getStoredSessionSync();
+      if (!(session == null ? void 0 : session.uid)) return;
+      try {
+        await markNotificationRead(session.uid, notificationId);
+      } catch {
+      }
     }
-  });
+  );
   ipcMain.handle("mark-all-read", async () => {
     const session = getStoredSessionSync();
     if (!(session == null ? void 0 : session.uid)) return;
@@ -44325,27 +44520,33 @@ function registerIpcHandlers() {
       await deleteReadNotifications(session.uid);
       return { success: true };
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : "Failed to clear seen" };
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : "Failed to clear seen"
+      };
     }
   });
-  ipcMain.handle("create-pairing-session", async (_, desktopName) => {
-    const session = getStoredSessionSync();
-    const uid = (session == null ? void 0 : session.uid) ?? "unknown-user";
-    const payload = createPairingPayload(uid, desktopName);
-    try {
-      await createPairingSession(payload);
-      if (pairingUnsubscribe) pairingUnsubscribe();
-      pairingUnsubscribe = subscribeToPairingSession(uid, (data) => {
-        if (data == null ? void 0 : data.confirmation) {
-          if (mainWindow) {
-            openInboxWindow();
+  ipcMain.handle(
+    "create-pairing-session",
+    async (_, desktopName) => {
+      const session = getStoredSessionSync();
+      const uid = (session == null ? void 0 : session.uid) ?? "unknown-user";
+      const payload = createPairingPayload(uid, desktopName);
+      try {
+        await createPairingSession(payload);
+        if (pairingUnsubscribe) pairingUnsubscribe();
+        pairingUnsubscribe = subscribeToPairingSession(uid, (data) => {
+          if (data == null ? void 0 : data.confirmation) {
+            if (mainWindow) {
+              openInboxWindow();
+            }
           }
-        }
-      });
-    } catch {
+        });
+      } catch {
+      }
+      return payload;
     }
-    return payload;
-  });
+  );
   ipcMain.handle("get-autostart", () => {
     return app$1.getLoginItemSettings().openAtLogin;
   });

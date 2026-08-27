@@ -8,23 +8,43 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Helper to check if caller owns the target user path
+    // Helper to check if caller owns the target user path (Desktop signed-in account)
     function isOwner(uid) {
       return isAuthenticated() && request.auth.uid == uid;
     }
 
-    // All user-scoped collections (notifications, replies, devices, whitelist, pairing)
+    // User root document
     match /users/{uid} {
       allow read, write: if isOwner(uid);
 
+      // Short-lived pairing sessions (scanned via QR code)
+      match /pairing/{docId} {
+        allow read, write: if true;
+      }
+
+      // Notifications mirrored from phone to desktop
+      match /notifications/{notifId} {
+        allow read: if isOwner(uid) || isAuthenticated();
+        allow create, update: if true;
+        allow delete: if isOwner(uid);
+      }
+
+      // Quick replies sent from desktop to phone
+      match /replies/{replyId} {
+        allow create, delete: if isOwner(uid);
+        allow read, update: if true;
+      }
+
+      // Mobile device heartbeat and status
+      match /devices/{deviceId} {
+        allow read: if isOwner(uid) || isAuthenticated();
+        allow write: if true;
+      }
+
+      // Fallback for other subcollections
       match /{allSubcollections=**} {
         allow read, write: if isOwner(uid);
       }
-    }
-
-    // Short-lived pairing sessions (First-run QR code pairing)
-    match /pending-pairing/{pairingId} {
-      allow read, write: if isAuthenticated();
     }
   }
 }
